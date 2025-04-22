@@ -2,7 +2,8 @@
 
 **Facet** is a Roslyn-powered source generator that creates derived classes from existing types by excluding properties — and optionally extending them.
 
-> Use it to generate lean DTOs, slim views, or faceted projections of your models with a single attribute.
+
+Use it to generate lean DTOs, slim views, or faceted projections of your models with a single attribute.
 
 ---
 
