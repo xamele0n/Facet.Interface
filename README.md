@@ -2,21 +2,21 @@
 
 **Facet** is a Roslyn-powered source generator that creates derived classes from existing types by excluding properties — and optionally extending them.
 
-> ?? Use it to generate lean DTOs, slim views, or faceted projections of your models with a single attribute.
+> Use it to generate lean DTOs, slim views, or faceted projections of your models with a single attribute.
 
 ---
 
-## ? Features
+## Features
 
-- ? Fast source generation at compile time
-- ?? Exclude properties with `nameof(...)` — no magic strings
-- ?? Supports adding extra properties manually
-- ?? No runtime reflection
-- ? No base class or interface requirements
+- Fast source generation at compile time
+- Exclude properties with `nameof(...)` — no magic strings
+- Supports adding extra properties manually
+- No runtime reflection
+- No base class or interface requirements
 
 ---
 
-## ?? Quick Start
+## Quick Start
 
 ### 1. Install
 
@@ -72,7 +72,7 @@ public partial class PersonNameWithNote
 }
 ```
 
-## ?? Package Info
+## Package Info
 
 - Target frameworks: netstandard2.0
 - Supports: .NET Core 3.1+, .NET 5+, .NET 6+, .NET 7, .NET 8
