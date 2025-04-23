@@ -16,10 +16,9 @@ No base classes. No mapppings. No reflection. No runtime cost.
 
 ## Features
 
-- :white_check_mark: Exclude properties and fields with `nameof(...)`
+- :white_check_mark: Add or exclude properties
 - :white_check_mark: Include public fields (optional)
 - :white_check_mark: Generate constructors that copy from the source type
-- :white_check_mark: Add your own extra properties in the generated type
 - :white_check_mark: No base class or interface required
 - :white_check_mark: No runtime reflection — compile-time only
 - :white_check_mark: Works with or without namespaces
@@ -82,15 +81,64 @@ var person = new Person
 var dto = new PersonDto(person);
 ```
 
-## Why Facet?
+## Complex mapping support
 
-Why Facet?
-No mappings. No reflection. No bloated libraries.
+If you want to map properties with custom logic, you can use the `Facet.Mapping` package.
 
-Just clean, compile-time class shaping — with minimal syntax and full control.
+### 1. Install the mapping package
 
-## Package Info
+```bash
+dotnet add package Facet.Mapping
+````
 
-- Target frameworks: netstandard2.0
-- Supports: .NET Core 3.1+, .NET 5+, .NET 6+, .NET 7, .NET 8
-- Analyzer delivery: Source generator is embedded in the NuGet package
+### 2. Define your models
+
+Source model:
+```csharp
+public class User
+{
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public DateTime Registered { get; set; }
+}
+```
+Target facet:
+```csharp
+[Facet(
+    typeof(User),
+    exclude: new[] { nameof(User.FirstName), nameof(User.LastName), nameof(User.Registered) },
+    Configuration = typeof(UserMapper))]
+public partial class UserDto
+{
+    public string FullName { get; set; }
+    public string RegisteredText { get; set; }
+}
+```
+### 3. Create and use map configuration
+
+Mapping configuration from source to your facet:
+```csharp
+public class UserMapper : IFacetMapConfiguration<User, UserDto>
+{
+    public static void Map(User source, UserDto target)
+    {
+        target.FullName = $"{source.FirstName} {source.LastName}";
+        target.RegisteredText = source.Registered.ToString("yyyy-MM-dd");
+    }
+}
+```
+
+```csharp
+var user = new User
+{
+  FirstName = "Tim",
+  LastName = "Maes",
+  Registered = new DateTime(2020, 1, 15)
+}
+
+var dto = new UserDto(user);
+
+Console.WriteLine(dto.FullName);        // Tim Maes
+Console.WriteLine(dto.RegisteredText); // 2020-01-15
+
+```
