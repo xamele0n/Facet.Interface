@@ -12,7 +12,7 @@
 		<Authors>Tim Maes</Authors>
 		<Description>Generate lean DTOs, slim views, or faceted projections of your models with a single attribute.</Description>
 		<PackageTags>source-generator dto projection redaction facet</PackageTags>
-		<RepositoryUrl>https://github.com/yourname/facet</RepositoryUrl>
+		<RepositoryUrl>https://github.com/Tim-Maes/Facet</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Title>Facet</Title>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
