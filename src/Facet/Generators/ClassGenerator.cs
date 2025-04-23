@@ -23,8 +23,7 @@ namespace Facet.Generators
             foreach (var candidate in receiver.Candidates)
             {
                 var model = context.Compilation.GetSemanticModel(candidate.SyntaxTree);
-                var symbol = model.GetDeclaredSymbol(candidate) as INamedTypeSymbol;
-                if (symbol == null)
+                if (model.GetDeclaredSymbol(candidate) is not INamedTypeSymbol symbol)
                     continue;
 
                 foreach (var attributeData in symbol.GetAttributes()
@@ -40,22 +39,42 @@ namespace Facet.Generators
                         excludedArg.Values
                             .Select(v => v.Value?.ToString())
                             .Where(v => v != null)!
-                            .Cast<string>()
-                    );
+                            .Cast<string>());
 
-                    var sourceMembers = sourceTypeSymbol.GetMembers()
+                    var namedArgs = attributeData.NamedArguments.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+
+                    bool includeFields = namedArgs.TryGetValue("IncludeFields", out var includeFieldsValue)
+                        && includeFieldsValue.Value is bool f && f;
+
+                    bool generateConstructor = namedArgs.TryGetValue("GenerateConstructor", out var generateCtorValue)
+                        && generateCtorValue.Value is bool g && g;
+
+                    var props = sourceTypeSymbol.GetMembers()
                         .OfType<IPropertySymbol>()
-                        .Where(p => !excluded.Contains(p.Name))
-                        .ToList();
+                        .Where(p => p.DeclaredAccessibility == Accessibility.Public && !excluded.Contains(p.Name));
 
-                    var classSource = GenerateClass(symbol.Name, sourceMembers, symbol.ContainingNamespace.ToDisplayString());
+                    var fields = includeFields
+                        ? sourceTypeSymbol.GetMembers()
+                            .OfType<IFieldSymbol>()
+                            .Where(f => f.DeclaredAccessibility == Accessibility.Public && !excluded.Contains(f.Name))
+                        : Enumerable.Empty<IFieldSymbol>();
+
+                    var sourceMembers = props.Cast<ISymbol>().Concat(fields).ToList();
+
+                    var classSource = GenerateClass(
+                        className: symbol.Name,
+                        ns: symbol.ContainingNamespace.ToDisplayString(),
+                        members: sourceMembers,
+                        sourceTypeName: sourceTypeSymbol.ToDisplayString(),
+                        generateConstructor: generateConstructor
+                    );
 
                     context.AddSource($"{symbol.Name}.g.cs", SourceText.From(classSource, Encoding.UTF8));
                 }
             }
         }
 
-        private static string GenerateClass(string className, List<IPropertySymbol> properties, string ns)
+        private static string GenerateClass(string className, string ns, List<ISymbol> members, string sourceTypeName, bool generateConstructor)
         {
             var sb = new StringBuilder();
             sb.AppendLine($"namespace {ns};");
@@ -63,9 +82,32 @@ namespace Facet.Generators
             sb.AppendLine($"public partial class {className}");
             sb.AppendLine("{");
 
-            foreach (var prop in properties)
+            foreach (var member in members)
             {
-                sb.AppendLine($"    public {prop.Type.ToDisplayString()} {prop.Name} {{ get; set; }}");
+                string type = (member as IPropertySymbol)?.Type.ToDisplayString()
+                           ?? (member as IFieldSymbol)?.Type.ToDisplayString()
+                           ?? "object";
+
+                if (member is IPropertySymbol)
+                {
+                    sb.AppendLine($"    public {type} {member.Name} {{ get; set; }}");
+                }
+                else if (member is IFieldSymbol)
+                {
+                    sb.AppendLine($"    public {type} {member.Name};");
+                }
+            }
+
+            if (generateConstructor)
+            {
+                sb.AppendLine();
+                sb.AppendLine($"    public {className}({sourceTypeName} source)");
+                sb.AppendLine("    {");
+                foreach (var member in members)
+                {
+                    sb.AppendLine($"        this.{member.Name} = source.{member.Name};");
+                }
+                sb.AppendLine("    }");
             }
 
             sb.AppendLine("}");
