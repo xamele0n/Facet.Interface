@@ -47,8 +47,8 @@ namespace Facet.Generators
                     bool includeFields = !namedArgs.TryGetValue("IncludeFields", out var includeFieldsValue)
                         || (includeFieldsValue.Value is bool f && f);
 
-                    bool generateConstructor = namedArgs.TryGetValue("GenerateConstructor", out var generateCtorValue)
-                        && generateCtorValue.Value is bool g && g;
+                    bool generateConstructor = !namedArgs.TryGetValue("GenerateConstructor", out var generateCtorValue)
+                        || (generateCtorValue.Value is bool g && g);
 
                     var configurationType = namedArgs.TryGetValue("Configuration", out var configValue)
                         ? configValue.Value as INamedTypeSymbol
