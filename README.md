@@ -95,7 +95,7 @@ var dto = new PersonDto(person);
 
 Which results in:
 
-```
+```csharp
 public partial class PersonDto
 {
     public string Name { get; set; }
