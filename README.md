@@ -48,7 +48,7 @@ public class Person
 [Facet(typeof(Person), GenerateConstructor = true)]
 public partial class PersonDto { }
 
-// Generate while adding and removing properties
+// Generate class while adding and removing properties
 
 [Facet(typeof(Person), exclude: nameof(Person.Email)]
 public partial class PersonWithNote 
