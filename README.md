@@ -94,8 +94,8 @@ Target facet:
 ```csharp
 [Facet(
     typeof(User),
-    exclude: new[] { nameof(User.FirstName), nameof(User.LastName), nameof(User.Registered) },
-    Configuration = typeof(UserMapper))]
+    exclude: new[] { ... }, //optional
+    Configuration = typeof(UserMapConfig))]
 public partial class UserDto
 {
     public string FullName { get; set; }
@@ -106,7 +106,7 @@ public partial class UserDto
 
 Mapping configuration from source to your facet:
 ```csharp
-public class UserMapper : IFacetMapConfiguration<User, UserDto>
+public class UserMappConfig : IFacetMapConfiguration<User, UserDto>
 {
     public static void Map(User source, UserDto target)
     {
