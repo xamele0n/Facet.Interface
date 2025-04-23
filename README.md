@@ -82,7 +82,7 @@ public partial class PersonNameWithNote
 ### 5 Constructors
 
 ```csharp
-[Facet(typeof(Person), nameof(Person.Email), GenerateConstructor = true)]
+[Facet(typeof(Person), GenerateConstructor = true)]
 public partial class PersonDto { }
 ```
 
