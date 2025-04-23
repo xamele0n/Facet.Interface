@@ -43,8 +43,8 @@ namespace Facet.Generators
 
                     var namedArgs = attributeData.NamedArguments.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-                    bool includeFields = namedArgs.TryGetValue("IncludeFields", out var includeFieldsValue)
-                        && includeFieldsValue.Value is bool f && f;
+                    bool includeFields = !namedArgs.TryGetValue("IncludeFields", out var includeFieldsValue)
+                        || (includeFieldsValue.Value is bool f && f);
 
                     bool generateConstructor = namedArgs.TryGetValue("GenerateConstructor", out var generateCtorValue)
                         && generateCtorValue.Value is bool g && g;
@@ -61,41 +61,51 @@ namespace Facet.Generators
 
                     var sourceMembers = props.Cast<ISymbol>().Concat(fields).ToList();
 
+                    var namespaceName = symbol.ContainingNamespace?.IsGlobalNamespace == false
+                        ? symbol.ContainingNamespace.ToDisplayString()
+                        : null;
+
                     var classSource = GenerateClass(
                         className: symbol.Name,
-                        ns: symbol.ContainingNamespace.ToDisplayString(),
+                        ns: namespaceName,
                         members: sourceMembers,
-                        sourceTypeName: sourceTypeSymbol.ToDisplayString(),
+                        sourceTypeName: sourceTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                         generateConstructor: generateConstructor
                     );
 
                     context.AddSource($"{symbol.Name}.g.cs", SourceText.From(classSource, Encoding.UTF8));
+
+                    System.IO.File.WriteAllText(
+    @$"C:\Temp\FacetDebug\{symbol.Name}.g.cs",
+    classSource
+);
                 }
             }
         }
 
-        private static string GenerateClass(string className, string ns, List<ISymbol> members, string sourceTypeName, bool generateConstructor)
+        private static string GenerateClass(string className, string? ns, List<ISymbol> members, string sourceTypeName, bool generateConstructor)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"namespace {ns};");
-            sb.AppendLine();
+
+            if (!string.IsNullOrWhiteSpace(ns))
+            {
+                sb.AppendLine($"namespace {ns}");
+                sb.AppendLine("{");
+            }
+
             sb.AppendLine($"public partial class {className}");
             sb.AppendLine("{");
 
             foreach (var member in members)
             {
-                string type = (member as IPropertySymbol)?.Type.ToDisplayString()
-                           ?? (member as IFieldSymbol)?.Type.ToDisplayString()
+                string type = (member as IPropertySymbol)?.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
+                           ?? (member as IFieldSymbol)?.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
                            ?? "object";
 
                 if (member is IPropertySymbol)
-                {
                     sb.AppendLine($"    public {type} {member.Name} {{ get; set; }}");
-                }
                 else if (member is IFieldSymbol)
-                {
                     sb.AppendLine($"    public {type} {member.Name};");
-                }
             }
 
             if (generateConstructor)
@@ -103,14 +113,20 @@ namespace Facet.Generators
                 sb.AppendLine();
                 sb.AppendLine($"    public {className}({sourceTypeName} source)");
                 sb.AppendLine("    {");
+
                 foreach (var member in members)
                 {
                     sb.AppendLine($"        this.{member.Name} = source.{member.Name};");
                 }
+
                 sb.AppendLine("    }");
             }
 
             sb.AppendLine("}");
+
+            if (!string.IsNullOrWhiteSpace(ns))
+                sb.AppendLine("}");
+
             return sb.ToString();
         }
 
