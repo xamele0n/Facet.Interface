@@ -49,6 +49,7 @@ public class Person
 public partial class PersonDto { }
 
 // Generate class while adding and removing properties
+// You can pass an array of properties to exclude
 
 [Facet(typeof(Person), exclude: nameof(Person.Email)]
 public partial class PersonWithNote 
@@ -56,7 +57,9 @@ public partial class PersonWithNote
     public string Note { get; set; }
 }
 ```
+
 The `PersonDto` will have a constructor that maps the source type properties.
+
 `PersonWithNote` is generated and will not have the Email property, but will have the Note property.
 
 ### 3. Usage
