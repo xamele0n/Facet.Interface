@@ -12,18 +12,6 @@ Exclude properties, include public fields, add your own members, or generate a c
 
 Use Facet to build lightweight DTOs, API shapes, or UI-bound view models **without writing boilerplate or mapping code.**
 
-No base classes. No mapppings. No reflection. No runtime cost.
-
-## Features
-
-- :white_check_mark: Add or exclude properties
-- :white_check_mark: Include public fields (optional)
-- :white_check_mark: Generate constructors that copy from the source type
-- :white_check_mark: No base class or interface required
-- :white_check_mark: No runtime reflection — compile-time only
-- :white_check_mark: Works with or without namespaces
-- :white_check_mark: Don't worry about usings
-
 ---
 
 ## Quick Start
