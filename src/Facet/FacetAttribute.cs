@@ -26,7 +26,10 @@ public sealed class FacetAttribute : Attribute
     /// <summary>
     /// Whether to generate a constructor that accepts the source type and copies over matching members.
     /// </summary>
-    public bool GenerateConstructor { get; set; } = false;
+    public bool GenerateConstructor { get; set; } = true;
+
+
+    public Type? Configuration { get; set; }
 
     /// <summary>
     /// Creates a new FacetAttribute that targets a given source type and excludes specified members.

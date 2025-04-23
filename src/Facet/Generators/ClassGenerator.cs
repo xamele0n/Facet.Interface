@@ -50,6 +50,10 @@ namespace Facet.Generators
                     bool generateConstructor = namedArgs.TryGetValue("GenerateConstructor", out var generateCtorValue)
                         && generateCtorValue.Value is bool g && g;
 
+                    var configurationType = namedArgs.TryGetValue("Configuration", out var configValue)
+                        ? configValue.Value as INamedTypeSymbol
+                        : null;
+
                     var props = sourceTypeSymbol.GetMembers()
                         .OfType<IPropertySymbol>()
                         .Where(p => p.DeclaredAccessibility == Accessibility.Public && !excluded.Contains(p.Name));
@@ -71,7 +75,8 @@ namespace Facet.Generators
                         ns: namespaceName,
                         members: sourceMembers,
                         sourceTypeName: sourceTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                        generateConstructor: generateConstructor
+                        generateConstructor: generateConstructor,
+                        configurationTypeName: configurationType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
                     );
 
                     context.AddSource($"{symbol.Name}.g.cs", SourceText.From(classSource, Encoding.UTF8));
@@ -79,7 +84,13 @@ namespace Facet.Generators
             }
         }
 
-        private static string GenerateClass(string className, string? ns, List<ISymbol> members, string sourceTypeName, bool generateConstructor)
+        private static string GenerateClass(
+            string className,
+            string? ns,
+            List<ISymbol> members,
+            string sourceTypeName,
+            bool generateConstructor,
+            string? configurationTypeName)
         {
             var sb = new StringBuilder();
 
@@ -113,6 +124,11 @@ namespace Facet.Generators
                 foreach (var member in members)
                 {
                     sb.AppendLine($"        this.{member.Name} = source.{member.Name};");
+                }
+
+                if (!string.IsNullOrWhiteSpace(configurationTypeName))
+                {
+                    sb.AppendLine($"        {configurationTypeName}.Map(source, this);");
                 }
 
                 sb.AppendLine("    }");
