@@ -47,10 +47,7 @@ public class Person
 
 // Generate class that can be mapped from source model
 
-[Facet(
-    typeof(Person),
-    exclude: new[] { nameof(Person.Email) },
-    GenerateConstructor = true)]
+[Facet(typeof(Person), GenerateConstructor = true)]
 public partial class PersonDto { }
 
 // Generate while adding and removing properties
@@ -74,10 +71,6 @@ var person = new Person
 };
 
 var dto = new PersonDto(person);
-
-// Result: dto has Name, Age, RawId — but not Email
-Console.WriteLine(dto.Name);
-Console.WriteLine(dto.RawId);
 ```
 
 ## Why Facet?
