@@ -1,19 +1,24 @@
 # Facet
 
-**Facet** is a Roslyn-powered source generator that creates derived classes from existing types by excluding properties — and optionally extending them.
+**Facet** is a compile-time source generator that creates partial classes from existing types — by copying only the members you want.
 
+Exclude properties, include public fields, add your own members, or generate a constructor — all with a single `[Facet]` attribute.
 
-Use it to generate lean DTOs, slim views, or faceted projections of your models with a single attribute.
+Use Facet to build lightweight DTOs, API shapes, or UI-bound view models **without writing boilerplate or mapping code.**
+
+No base classes. No reflection. No runtime cost.
 
 ---
 
 ## Features
 
-- Fast source generation at compile time
-- Exclude properties with `nameof(...)` — no magic strings
-- Supports adding extra properties manually
-- No runtime reflection
-- No base class or interface requirements
+- :white_check_mark: Exclude properties and fields with `nameof(...)`
+- :white_check_mark: Include public fields (optional)
+- :white_check_mark: Generate constructors that copy from the source type
+- :white_check_mark: Add your own extra properties in the generated type
+- :white_check_mark: No base class or interface required
+- :white_check_mark: No runtime reflection — compile-time only
+- :white_check_mark: Works with or without namespaces
 
 ---
 
@@ -53,7 +58,7 @@ public partial class PersonWithoutEmail
 }
 ```
 
-### 4 Extending while redacting
+### 4 Extending
 
 ```csharp
 [Facet(typeof(Person),
@@ -73,6 +78,45 @@ public partial class PersonNameWithNote
     public string Note { get; set; }
 }
 ```
+
+### 5 Constructors
+
+```csharp
+[Facet(typeof(Person), nameof(Person.Email), GenerateConstructor = true)]
+public partial class PersonDto { }
+```
+
+Now you can do:
+
+```csharp
+var person = new Person();
+var dto = new PersonDto(person);
+```
+
+Which results in:
+
+```
+public partial class PersonDto
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+    public Guid RawId;
+
+    public PersonDto(Person source)
+    {
+        this.Name = source.Name;
+        this.Age = source.Age;
+        this.RawId = source.RawId;
+    }
+}
+```
+
+## Why Facet?
+
+Why Facet?
+No mappings. No reflection. No bloated libraries.
+
+Just clean, compile-time class shaping — with minimal syntax and full control.
 
 ## Package Info
 
