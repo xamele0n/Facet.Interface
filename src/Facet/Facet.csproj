@@ -8,13 +8,14 @@
 		<IsPackable>true</IsPackable>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageId>Facet</PackageId>
-		<Version>0.1.1</Version>
+		<Version>1.0.0</Version>
 		<Authors>Tim Maes</Authors>
 		<Description>Generate lean DTOs, slim views, or faceted projections of your models with a single attribute.</Description>
 		<PackageTags>source-generator dto projection redaction facet</PackageTags>
 		<RepositoryUrl>https://github.com/yourname/facet</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Title>Facet</Title>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -27,7 +28,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- Include the source generator DLL itself in the analyzer path -->
 		<None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+		<None Include="..\..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 </Project>
