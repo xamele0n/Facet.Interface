@@ -1,3 +1,5 @@
+_This is a new project, any help, feedback and contributions are highy appreciated._
+
 # Facet
 
 **Facet** is a compile-time source generator that creates partial classes from existing types — by copying only the members you want.
