@@ -6,7 +6,7 @@ Exclude properties, include public fields, add your own members, or generate a c
 
 Use Facet to build lightweight DTOs, API shapes, or UI-bound view models **without writing boilerplate or mapping code.**
 
-No base classes. No reflection. No runtime cost.
+No base classes. No mapppings. No reflection. No runtime cost.
 
 ---
 
@@ -19,6 +19,7 @@ No base classes. No reflection. No runtime cost.
 - :white_check_mark: No base class or interface required
 - :white_check_mark: No runtime reflection — compile-time only
 - :white_check_mark: Works with or without namespaces
+- :white_check_mark: Don't worry about usings
 
 ---
 
@@ -30,8 +31,9 @@ No base classes. No reflection. No runtime cost.
 dotnet add package Facet
 ```
 
-### 2. Use
+### 2. Create your facet
 
+Define a `partial class`, attach the `Facet` attribute and you're done.
 ```csharp
 using Facet;
 
@@ -40,75 +42,42 @@ public class Person
     public string Name { get; set; }
     public string Email { get; set; }
     public int Age { get; set; }
-}
-
-[Facet(typeof(Person), nameof(Person.Email))]
-public partial class PersonWithoutEmail
-{
-}
-```
-
-### 3. What gets generated
-
-```csharp
-public partial class PersonWithoutEmail
-{
-    public string Name { get; set; }
-    public int Age { get; set; }
-}
-```
-
-### 4 Extending
-
-```csharp
-[Facet(typeof(Person),
- excludes: new [] { nameof(Person.Email), nameof(Person.Age) } )]
-public partial class PersonNameWithNote
-{
-    public string Note { get; set; }
-}
-```
-
-Becomes:
-
-```csharp
-public partial class PersonNameWithNote
-{
-    public string Name { get; set; }
-    public string Note { get; set; }
-}
-```
-
-### 5 Constructors
-
-```csharp
-[Facet(typeof(Person), GenerateConstructor = true)]
-public partial class PersonDto { }
-```
-
-Now you can do:
-
-```csharp
-var person = new Person();
-var dto = new PersonDto(person);
-```
-
-Which results in:
-
-```csharp
-public partial class PersonDto
-{
-    public string Name { get; set; }
-    public int Age { get; set; }
     public Guid RawId;
-
-    public PersonDto(Person source)
-    {
-        this.Name = source.Name;
-        this.Age = source.Age;
-        this.RawId = source.RawId;
-    }
 }
+
+// Generate class that can be mapped from source model
+
+[Facet(
+    typeof(Person),
+    exclude: new[] { nameof(Person.Email) },
+    GenerateConstructor = true)]
+public partial class PersonDto { }
+
+// Generate while adding and removing properties
+
+[Facet(typeof(Person), exclude: nameof(Person.Email)]
+public partial class PersonWithNote 
+{
+    public string Note { get; set; }
+}
+```
+
+### 3. Usage
+
+```csharp
+var person = new Person
+{
+    Name = "Tim",
+    Email = "hidden@example.com",
+    Age = 33,
+    RawId = Guid.NewGuid()
+};
+
+var dto = new PersonDto(person);
+
+// Result: dto has Name, Age, RawId — but not Email
+Console.WriteLine(dto.Name);
+Console.WriteLine(dto.RawId);
 ```
 
 ## Why Facet?
