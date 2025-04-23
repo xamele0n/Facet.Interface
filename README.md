@@ -1,6 +1,6 @@
 # Facet
 
-**Facet** is a Roslyn-powered source generator that creates derived classes from existing types by excluding properties — and optionally extending them.
+**Facet** is a Roslyn-powered source generator that creates derived classes from existing types by excluding properties â€” and optionally extending them.
 
 
 Use it to generate lean DTOs, slim views, or faceted projections of your models with a single attribute.
@@ -10,7 +10,7 @@ Use it to generate lean DTOs, slim views, or faceted projections of your models 
 ## Features
 
 - Fast source generation at compile time
-- Exclude properties with `nameof(...)` — no magic strings
+- Exclude properties with `nameof(...)` â€” no magic strings
 - Supports adding extra properties manually
 - No runtime reflection
 - No base class or interface requirements
@@ -56,7 +56,8 @@ public partial class PersonWithoutEmail
 ### 4 Extending while redacting
 
 ```csharp
-[Facet(typeof(Person), nameof(Person.Email), nameof(Person.Age))]
+[Facet(typeof(Person),
+ excludes: new [] { nameof(Person.Email), nameof(Person.Age) } )]
 public partial class PersonNameWithNote
 {
     public string Note { get; set; }
