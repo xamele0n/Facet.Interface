@@ -28,7 +28,15 @@ public sealed class FacetAttribute : Attribute
     /// </summary>
     public bool GenerateConstructor { get; set; } = true;
 
-
+    /// <summary>
+    /// Optional type that provides custom mapping logic via a static Map(source, target) method.
+    /// Must match the signature defined in IFacetMapConfiguration&lt;TSource, TTarget&gt;.
+    /// </summary>
+    /// <remarks>
+    /// The type must define a static method with the signature:
+    /// <c>public static void Map(TSource source, TTarget target)</c>.
+    /// This allows injecting custom projections, formatting, or derived values at compile time.
+    /// </remarks>
     public Type? Configuration { get; set; }
 
     /// <summary>
