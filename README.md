@@ -56,7 +56,8 @@ public partial class PersonWithoutEmail
 ### 4 Extending while redacting
 
 ```csharp
-[Facet(typeof(Person), excludes: new [] { nameof(Person.Email), nameof(Person.Age) } )]
+[Facet(typeof(Person),
+ excludes: new [] { nameof(Person.Email), nameof(Person.Age) } )]
 public partial class PersonNameWithNote
 {
     public string Note { get; set; }
