@@ -74,6 +74,11 @@ namespace Facet.Generators
                     );
 
                     context.AddSource($"{symbol.Name}.g.cs", SourceText.From(classSource, Encoding.UTF8));
+
+                    System.IO.File.WriteAllText(
+    @$"C:\Temp\FacetDebug\{symbol.Name}.g.cs",
+    classSource
+);
                 }
             }
         }
