@@ -8,8 +8,6 @@ Use Facet to build lightweight DTOs, API shapes, or UI-bound view models **witho
 
 No base classes. No mapppings. No reflection. No runtime cost.
 
----
-
 ## Features
 
 - :white_check_mark: Exclude properties and fields with `nameof(...)`
