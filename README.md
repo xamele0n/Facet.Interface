@@ -2,6 +2,10 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 
 # Facet
 
+```
+- one part of a subject, situation, etc. that has many parts
+```
+
 **Facet** is a compile-time source generator that creates partial classes from existing types — by copying only the members you want.
 
 Exclude properties, include public fields, add your own members, or generate a constructor — all with a single `[Facet]` attribute.
