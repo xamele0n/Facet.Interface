@@ -23,6 +23,7 @@ namespace Facet.Generators
             foreach (var candidate in receiver.Candidates)
             {
                 var model = context.Compilation.GetSemanticModel(candidate.SyntaxTree);
+
                 if (model.GetDeclaredSymbol(candidate) is not INamedTypeSymbol symbol)
                     continue;
 
