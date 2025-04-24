@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 
@@ -13,7 +12,6 @@ public sealed class ClassGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Select all class declarations with attributes
         var classDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
                 predicate: static (s, _) => s is ClassDeclarationSyntax cds && cds.AttributeLists.Count > 0,
@@ -50,8 +48,8 @@ public sealed class ClassGenerator : IIncrementalGenerator
 
             var namedArgs = attributeData.NamedArguments.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 
-            bool includeFields = !namedArgs.TryGetValue("IncludeFields", out var includeFieldsValue)
-                || (includeFieldsValue.Value is bool f && f);
+            bool includeFields = namedArgs.TryGetValue("IncludeFields", out var includeFieldsValue)
+                && includeFieldsValue.Value is bool f && f;
 
             bool generateConstructor = !namedArgs.TryGetValue("GenerateConstructor", out var generateCtorValue)
                 || (generateCtorValue.Value is bool g && g);
@@ -62,15 +60,24 @@ public sealed class ClassGenerator : IIncrementalGenerator
 
             var props = sourceTypeSymbol.GetMembers()
                 .OfType<IPropertySymbol>()
-                .Where(p => p.DeclaredAccessibility == Accessibility.Public && !excluded.Contains(p.Name));
+                .Where(p =>
+                    p.DeclaredAccessibility == Accessibility.Public &&
+                    !excluded.Contains(p.Name) &&
+                    !p.IsReadOnly &&
+                    !(p.SetMethod != null && p.SetMethod.IsInitOnly))
+                .Cast<ISymbol>();
 
             var fields = includeFields
                 ? sourceTypeSymbol.GetMembers()
                     .OfType<IFieldSymbol>()
-                    .Where(f => f.DeclaredAccessibility == Accessibility.Public && !excluded.Contains(f.Name))
-                : Enumerable.Empty<IFieldSymbol>();
+                    .Where(f =>
+                        f.DeclaredAccessibility == Accessibility.Public &&
+                        !excluded.Contains(f.Name) &&
+                        !f.IsReadOnly)
+                    .Cast<ISymbol>()
+                : Enumerable.Empty<ISymbol>();
 
-            var sourceMembers = props.Cast<ISymbol>().Concat(fields).ToList();
+            var sourceMembers = props.Concat(fields).ToList();
 
             var ns = targetSymbol.ContainingNamespace?.IsGlobalNamespace == false
                 ? targetSymbol.ContainingNamespace.ToDisplayString()

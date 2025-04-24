@@ -21,7 +21,7 @@ public sealed class FacetAttribute : Attribute
     /// <summary>
     /// Whether to include public fields from the source type (default: true).
     /// </summary>
-    public bool IncludeFields { get; set; } = true;
+    public bool IncludeFields { get; set; } = false;
 
     /// <summary>
     /// Whether to generate a constructor that accepts the source type and copies over matching members.
