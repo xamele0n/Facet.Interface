@@ -20,7 +20,6 @@ public sealed class ClassGenerator : IIncrementalGenerator
             .Where(static m => m is not null);
 
         var compilation = context.CompilationProvider;
-
         var combined = classDeclarations.Combine(compilation);
 
         context.RegisterSourceOutput(combined, (spc, source) => Generate(source.Left, source.Right, spc));
@@ -62,9 +61,7 @@ public sealed class ClassGenerator : IIncrementalGenerator
                 .OfType<IPropertySymbol>()
                 .Where(p =>
                     p.DeclaredAccessibility == Accessibility.Public &&
-                    !excluded.Contains(p.Name) &&
-                    !p.IsReadOnly &&
-                    !(p.SetMethod != null && p.SetMethod.IsInitOnly))
+                    !excluded.Contains(p.Name))
                 .Cast<ISymbol>();
 
             var fields = includeFields
@@ -72,8 +69,7 @@ public sealed class ClassGenerator : IIncrementalGenerator
                     .OfType<IFieldSymbol>()
                     .Where(f =>
                         f.DeclaredAccessibility == Accessibility.Public &&
-                        !excluded.Contains(f.Name) &&
-                        !f.IsReadOnly)
+                        !excluded.Contains(f.Name))
                     .Cast<ISymbol>()
                 : Enumerable.Empty<ISymbol>();
 
@@ -122,9 +118,14 @@ public sealed class ClassGenerator : IIncrementalGenerator
                        ?? "object";
 
             if (member is IPropertySymbol)
+            {
+                // always generate writable
                 sb.AppendLine($"    public {type} {member.Name} {{ get; set; }}");
+            }
             else if (member is IFieldSymbol)
+            {
                 sb.AppendLine($"    public {type} {member.Name};");
+            }
         }
 
         if (generateConstructor)
