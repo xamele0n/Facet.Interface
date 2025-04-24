@@ -115,7 +115,7 @@ public class UserMappConfig : IFacetMapConfiguration<User, UserDto>
     }
 }
 ```
-
+Now you can just create a DTO instance, and the source object will be mapped accordingly.
 ```csharp
 var user = new User
 {
