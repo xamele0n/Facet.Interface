@@ -12,23 +12,23 @@ public sealed class ClassGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var classDeclarations = context.SyntaxProvider
+        var typeDeclarations = context.SyntaxProvider
             .CreateSyntaxProvider(
-                predicate: static (s, _) => s is ClassDeclarationSyntax cds && cds.AttributeLists.Count > 0,
-                transform: static (ctx, _) => (ClassDeclarationSyntax)ctx.Node
+                predicate: static (s, _) => s is TypeDeclarationSyntax tds && tds.AttributeLists.Count > 0,
+                transform: static (ctx, _) => (TypeDeclarationSyntax)ctx.Node
             )
             .Where(static m => m is not null);
 
         var compilation = context.CompilationProvider;
-        var combined = classDeclarations.Combine(compilation);
+        var combined = typeDeclarations.Combine(compilation);
 
         context.RegisterSourceOutput(combined, (spc, source) => Generate(source.Left, source.Right, spc));
     }
 
-    private void Generate(ClassDeclarationSyntax classDecl, Compilation compilation, SourceProductionContext context)
+    private void Generate(TypeDeclarationSyntax typeDecl, Compilation compilation, SourceProductionContext context)
     {
-        var model = compilation.GetSemanticModel(classDecl.SyntaxTree);
-        if (model.GetDeclaredSymbol(classDecl) is not INamedTypeSymbol targetSymbol)
+        var model = compilation.GetSemanticModel(typeDecl.SyntaxTree);
+        if (model.GetDeclaredSymbol(typeDecl) is not INamedTypeSymbol targetSymbol)
             return;
 
         foreach (var attributeData in targetSymbol.GetAttributes()
@@ -57,6 +57,10 @@ public sealed class ClassGenerator : IIncrementalGenerator
                 ? configValue.Value as INamedTypeSymbol
                 : null;
 
+            var kind = namedArgs.TryGetValue("Kind", out var kindValue) && kindValue.Value is int kindInt
+                ? (FacetKind)kindInt
+                : FacetKind.Class;
+
             var props = sourceTypeSymbol.GetMembers()
                 .OfType<IPropertySymbol>()
                 .Where(p =>
@@ -79,26 +83,27 @@ public sealed class ClassGenerator : IIncrementalGenerator
                 ? targetSymbol.ContainingNamespace.ToDisplayString()
                 : null;
 
-            var generatedSource = GenerateClass(
+            var generatedSource = GenerateType(
                 targetSymbol.Name,
                 ns,
                 sourceMembers,
                 sourceTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                 generateConstructor,
-                configurationType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)
-            );
+                configurationType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                kind);
 
-            context.AddSource($"{targetSymbol.Name}.g.cs", SourceText.From(generatedSource, Encoding.UTF8));
+            context.AddSource(targetSymbol.Name + ".g.cs", SourceText.From(generatedSource, Encoding.UTF8));
         }
     }
 
-    private static string GenerateClass(
-        string className,
+    private static string GenerateType(
+        string typeName,
         string? ns,
         List<ISymbol> members,
         string sourceTypeName,
         bool generateConstructor,
-        string? configurationTypeName)
+        string? configurationTypeName,
+        FacetKind kind)
     {
         var sb = new StringBuilder();
 
@@ -108,7 +113,9 @@ public sealed class ClassGenerator : IIncrementalGenerator
             sb.AppendLine("{");
         }
 
-        sb.AppendLine($"public partial class {className}");
+        var keyword = kind == FacetKind.Record ? "record" : "class";
+
+        sb.AppendLine($"public partial {keyword} {typeName}");
         sb.AppendLine("{");
 
         foreach (var member in members)
@@ -119,7 +126,6 @@ public sealed class ClassGenerator : IIncrementalGenerator
 
             if (member is IPropertySymbol)
             {
-                // always generate writable
                 sb.AppendLine($"    public {type} {member.Name} {{ get; set; }}");
             }
             else if (member is IFieldSymbol)
@@ -131,7 +137,7 @@ public sealed class ClassGenerator : IIncrementalGenerator
         if (generateConstructor)
         {
             sb.AppendLine();
-            sb.AppendLine($"    public {className}({sourceTypeName} source)");
+            sb.AppendLine($"    public {typeName}({sourceTypeName} source)");
             sb.AppendLine("    {");
 
             foreach (var member in members)

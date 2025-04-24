@@ -40,6 +40,11 @@ public sealed class FacetAttribute : Attribute
     public Type? Configuration { get; set; }
 
     /// <summary>
+    /// The kind of facet to generate. Determines whether a class or record is created.
+    /// </summary>
+    public FacetKind Kind { get; set; } = FacetKind.Class;
+
+    /// <summary>
     /// Creates a new FacetAttribute that targets a given source type and excludes specified members.
     /// </summary>
     /// <param name="sourceType">The type to generate from.</param>
