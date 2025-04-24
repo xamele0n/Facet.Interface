@@ -54,11 +54,19 @@ public partial class PersonWithNote
 {
     public string Note { get; set; }
 }
+
+[Facet(typeof(Person), Kind = FacetKind.Record]
+public partial record PersonRecord
+{
+    // ..
+}
 ```
 
 The `PersonDto` will have a constructor that maps the source type properties.
 
 `PersonWithNote` is generated and will not have the Email property, but will have the Note property.
+
+`PersoneRecord` is generated as a **record** 
 
 ### 3. Usage
 
