@@ -13,7 +13,7 @@ Zero runtime cost, no boilerplate.
 ---
 
 - :eight_spoked_asterisk: **Generate partial classes or records** based on existing types
-- :x: **Exclude fields/properties** you don’t need
+- :wrench: **Exclude fields/properties** you don’t need, or add new ones
 - :mailbox: **Include public fields** (opt-in)
 - :hammer: **Support custom mapping logic**
 - :link: **Auto-generate constructors** to initialize target from source
