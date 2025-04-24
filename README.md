@@ -6,7 +6,9 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 "One part of a subject, situation, object that has many parts."
 ```
 
-**Facet** is a C# source generator that produces slim DTOs, typed projections, and API-bound view models — directly from your domain models. Zero runtime cost, no boilerplate.
+**Facet** is a C# source generator that produces slim DTOs, typed projections, and API-bound view models — directly from your domain models.
+
+Zero runtime cost, no boilerplate.
 
 ---
 
