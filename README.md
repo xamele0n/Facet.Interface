@@ -6,11 +6,11 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 "One part of a subject, situation, object that has many parts."
 ```
 
-**Facet** is a compile-time source generator that creates partial classes from existing types — by copying only the members you want.
+**Facet** generates lean C# classes from existing models at compile time — just pick what you want, and skip what you don’t.
 
-Exclude properties, include public fields, add your own members, or generate a constructor — all with a single `[Facet]` attribute.
+Exclude members, include fields, extend with custom logic, or generate a constructor — all with a single `[Facet]` attribute.
 
-Use Facet to build lightweight DTOs, API shapes, or UI-bound view models **without writing boilerplate or mapping code.**
+Perfect for DTOs, API models, or typed projections — no boilerplate, no runtime cost.
 
 ---
 
