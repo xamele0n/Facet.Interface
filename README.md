@@ -3,7 +3,7 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 # Facet
 
 ```
-"One part of a subject, situation, etc. that has many parts."
+"One part of a subject, situation, object that has many parts."
 ```
 
 **Facet** is a compile-time source generator that creates partial classes from existing types — by copying only the members you want.
