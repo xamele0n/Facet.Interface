@@ -6,13 +6,16 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 "One part of a subject, situation, object that has many parts."
 ```
 
-**Facet** generates lean C# classes from existing models at compile time — just pick what you want, and skip what you don’t.
-
-Exclude members, include fields, extend with custom logic, or generate a constructor — all with a single `[Facet]` attribute.
-
-Perfect for DTOs, API models, or typed projections — no boilerplate, no runtime cost.
+**Facet** is a C# source generator that produces slim DTOs, typed projections, and API-bound view models — directly from your domain models. Zero runtime cost, no boilerplate.
 
 ---
+
+- :eight_spoked_asterisk: **Generate partial classes or records** based on existing types
+- :x: **Exclude fields/properties** you don’t need
+- :mailbox: **Include public fields** (opt-in)
+- :hammer: **Support custom mapping logic**
+- :link: **Auto-generate constructors** to initialize target from source
+- :nut_and_bolt: **Works with records, classes, readonly, and init-only** members
 
 ## Quick Start
 
