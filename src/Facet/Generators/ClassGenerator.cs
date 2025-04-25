@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Facet.Generators;
 
@@ -17,32 +18,38 @@ public sealed class ClassGenerator : IIncrementalGenerator
             .ForAttributeWithMetadataName(
                 "Facet.FacetAttribute",
                 predicate: static (node, _) => node is TypeDeclarationSyntax,
-                transform: static (ctx, _) => GetTargetModel(ctx))
+                transform: static (ctx, token) => GetTargetModel(ctx, token))
             .Where(static m => m is not null);
 
         context.RegisterSourceOutput(facetDeclarations, static (context, model) =>
         {
+            context.CancellationToken.ThrowIfCancellationRequested();
+
             var generated = Generate(model!);
             context.AddSource(model!.Name + ".g.cs", SourceText.From(generated, Encoding.UTF8));
         });
     }
 
-    private static FacetTargetModel? GetTargetModel(GeneratorAttributeSyntaxContext context)
+    private static FacetTargetModel? GetTargetModel(GeneratorAttributeSyntaxContext context, CancellationToken token)
     {
+        token.ThrowIfCancellationRequested();
+
         if (context.TargetSymbol is not INamedTypeSymbol targetSymbol)
             return null;
 
-        var attribute = context.Attributes.FirstOrDefault();
-        if (attribute == null || attribute.ConstructorArguments.Length == 0)
-            return null;
+        var attribute = context.Attributes[0]; 
+        token.ThrowIfCancellationRequested();
 
         var sourceType = attribute.ConstructorArguments[0].Value as INamedTypeSymbol;
         if (sourceType == null)
             return null;
 
-        var excluded = new HashSet<string>(attribute.ConstructorArguments.ElementAtOrDefault(1).Values
-            .Select(v => v.Value?.ToString())
-            .Where(n => n != null));
+        var excluded = new HashSet<string>(
+            attribute.ConstructorArguments.ElementAtOrDefault(1).Values
+                .Select(v => v.Value?.ToString())
+                .Where(n => n != null)!);
+
+        token.ThrowIfCancellationRequested();
 
         var includeFields = attribute.NamedArguments.FirstOrDefault(kvp => kvp.Key == "IncludeFields").Value.Value as bool? ?? false;
         var generateConstructor = attribute.NamedArguments.FirstOrDefault(kvp => kvp.Key == "GenerateConstructor").Value.Value as bool? ?? true;
@@ -55,16 +62,18 @@ public sealed class ClassGenerator : IIncrementalGenerator
 
         foreach (var m in sourceType.GetMembers())
         {
+            token.ThrowIfCancellationRequested();
+
             if (!excluded.Contains(m.Name))
             {
-                if (m is IPropertySymbol p && p.DeclaredAccessibility == Accessibility.Public)
+                if (m is IPropertySymbol { DeclaredAccessibility: Accessibility.Public } p)
                 {
                     members.Add(new FacetMember(
                         p.Name,
                         p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                         FacetMemberKind.Property));
                 }
-                else if (includeFields && m is IFieldSymbol f && f.DeclaredAccessibility == Accessibility.Public)
+                else if (includeFields && m is IFieldSymbol { DeclaredAccessibility: Accessibility.Public } f)
                 {
                     members.Add(new FacetMember(
                         f.Name,
@@ -74,7 +83,9 @@ public sealed class ClassGenerator : IIncrementalGenerator
             }
         }
 
-        var ns = targetSymbol.ContainingNamespace.IsGlobalNamespace ? null : targetSymbol.ContainingNamespace.ToDisplayString();
+        var ns = targetSymbol.ContainingNamespace.IsGlobalNamespace
+            ? null
+            : targetSymbol.ContainingNamespace.ToDisplayString();
 
         return new FacetTargetModel(
             name: targetSymbol.Name,
@@ -83,8 +94,7 @@ public sealed class ClassGenerator : IIncrementalGenerator
             generateConstructor: generateConstructor,
             sourceTypeName: sourceType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             configurationTypeName: configurationTypeName,
-            members: members.ToImmutableArray()
-        );
+            members: members.ToImmutableArray());
     }
 
     private static string Generate(FacetTargetModel model)
@@ -105,13 +115,9 @@ public sealed class ClassGenerator : IIncrementalGenerator
         foreach (var member in model.Members)
         {
             if (member.Kind == FacetMemberKind.Property)
-            {
                 sb.AppendLine($"    public {member.TypeName} {member.Name} {{ get; set; }}");
-            }
             else if (member.Kind == FacetMemberKind.Field)
-            {
                 sb.AppendLine($"    public {member.TypeName} {member.Name};");
-            }
         }
 
         if (model.GenerateConstructor)
