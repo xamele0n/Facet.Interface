@@ -68,7 +68,7 @@ The `PersonDto` will have a constructor that maps the source type properties.
 
 `PersoneRecord` is generated as a **record** 
 
-### 3. Usage
+You can map source to target:
 
 ```csharp
 var person = new Person
