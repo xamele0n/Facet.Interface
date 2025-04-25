@@ -10,7 +10,7 @@
 		<PackageId>Facet</PackageId>
 		<Version>1.4.1</Version>
 		<Authors>Tim Maes</Authors>
-		<Description>Generate lean DTOs, slim views, or faceted projections of your models with a single attribute.</Description>
+		<Description>A Roslyn source generator for lean DTOs, smart projections, and custom mappers.</Description>
 		<PackageTags>source-generator dto projection redaction facet</PackageTags>
 		<RepositoryUrl>https://github.com/Tim-Maes/Facet</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
