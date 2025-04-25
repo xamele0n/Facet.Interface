@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Facet.Generators;
 
-[Generator]
+[Generator(LanguageNames.CSharp)]
 public sealed class ClassGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
