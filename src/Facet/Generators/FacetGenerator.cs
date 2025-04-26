@@ -10,13 +10,13 @@ using System.Threading;
 namespace Facet.Generators;
 
 [Generator(LanguageNames.CSharp)]
-public sealed class ClassGenerator : IIncrementalGenerator
+public sealed class FacetGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var facetDeclarations = context.SyntaxProvider
             .ForAttributeWithMetadataName(
-                "Facet.FacetAttribute",
+                FacetAttributeName,
                 predicate: static (node, _) => node is TypeDeclarationSyntax,
                 transform: static (ctx, token) => GetTargetModel(ctx, token))
             .Where(static m => m is not null);
@@ -30,6 +30,8 @@ public sealed class ClassGenerator : IIncrementalGenerator
         });
     }
 
+    private const string FacetAttributeName = "Facet.FacetAttribute";
+
     private static FacetTargetModel? GetTargetModel(GeneratorAttributeSyntaxContext context, CancellationToken token)
     {
         token.ThrowIfCancellationRequested();
@@ -37,7 +39,10 @@ public sealed class ClassGenerator : IIncrementalGenerator
         if (context.TargetSymbol is not INamedTypeSymbol targetSymbol)
             return null;
 
-        var attribute = context.Attributes[0]; 
+        if (context.Attributes.Length == 0)
+            return null;
+
+        var attribute = context.Attributes[0];
         token.ThrowIfCancellationRequested();
 
         var sourceType = attribute.ConstructorArguments[0].Value as INamedTypeSymbol;
@@ -51,19 +56,18 @@ public sealed class ClassGenerator : IIncrementalGenerator
 
         token.ThrowIfCancellationRequested();
 
-        var includeFields = attribute.NamedArguments.FirstOrDefault(kvp => kvp.Key == "IncludeFields").Value.Value as bool? ?? false;
-        var generateConstructor = attribute.NamedArguments.FirstOrDefault(kvp => kvp.Key == "GenerateConstructor").Value.Value as bool? ?? true;
+        var includeFields = GetNamedArg(attribute.NamedArguments, "IncludeFields", false);
+        var generateConstructor = GetNamedArg(attribute.NamedArguments, "GenerateConstructor", true);
+        var generateExpressionProjection = GetNamedArg(attribute.NamedArguments, "GenerateExpressionProjection", false);
         var configurationTypeName = attribute.NamedArguments.FirstOrDefault(kvp => kvp.Key == "Configuration").Value.Value?.ToString();
         var kind = attribute.NamedArguments.FirstOrDefault(kvp => kvp.Key == "Kind").Value.Value is int k
             ? (FacetKind)k
             : FacetKind.Class;
 
         var members = new List<FacetMember>();
-
         foreach (var m in sourceType.GetMembers())
         {
             token.ThrowIfCancellationRequested();
-
             if (!excluded.Contains(m.Name))
             {
                 if (m is IPropertySymbol { DeclaredAccessibility: Accessibility.Public } p)
@@ -92,14 +96,24 @@ public sealed class ClassGenerator : IIncrementalGenerator
             @namespace: ns,
             kind: kind,
             generateConstructor: generateConstructor,
+            generateExpressionProjection: generateExpressionProjection,
             sourceTypeName: sourceType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             configurationTypeName: configurationTypeName,
             members: members.ToImmutableArray());
     }
 
+    private static T GetNamedArg<T>(ImmutableArray<KeyValuePair<string, TypedConstant>> args, string name, T defaultValue)
+        => args.FirstOrDefault(kv => kv.Key == name).Value.Value is T t ? t : defaultValue;
+
     private static string Generate(FacetTargetModel model)
     {
         var sb = new StringBuilder();
+        sb.AppendLine("using System;");
+        if (model.GenerateExpressionProjection)
+        {
+            sb.AppendLine("using System.Linq.Expressions;");
+        }
+        sb.AppendLine();
 
         if (!string.IsNullOrWhiteSpace(model.Namespace))
         {
@@ -108,7 +122,6 @@ public sealed class ClassGenerator : IIncrementalGenerator
         }
 
         var keyword = model.Kind == FacetKind.Record ? "record" : "class";
-
         sb.AppendLine($"public partial {keyword} {model.Name}");
         sb.AppendLine("{");
 
@@ -116,7 +129,7 @@ public sealed class ClassGenerator : IIncrementalGenerator
         {
             if (member.Kind == FacetMemberKind.Property)
                 sb.AppendLine($"    public {member.TypeName} {member.Name} {{ get; set; }}");
-            else if (member.Kind == FacetMemberKind.Field)
+            else
                 sb.AppendLine($"    public {member.TypeName} {member.Name};");
         }
 
@@ -125,14 +138,33 @@ public sealed class ClassGenerator : IIncrementalGenerator
             sb.AppendLine();
             sb.AppendLine($"    public {model.Name}({model.SourceTypeName} source)");
             sb.AppendLine("    {");
-
             foreach (var member in model.Members)
                 sb.AppendLine($"        this.{member.Name} = source.{member.Name};");
-
             if (!string.IsNullOrWhiteSpace(model.ConfigurationTypeName))
                 sb.AppendLine($"        {model.ConfigurationTypeName}.Map(source, this);");
-
             sb.AppendLine("    }");
+        }
+
+        if (model.GenerateExpressionProjection)
+        {
+            sb.AppendLine();
+            sb.AppendLine($"    public static Expression<Func<{model.SourceTypeName}, {model.Name}>> Projection =>");
+            if (model.GenerateConstructor)
+            {
+                sb.AppendLine($"        source => new {model.Name}(source);");
+            }
+            else
+            {
+                sb.AppendLine("        source => new " + model.Name);
+                sb.AppendLine("        {");
+                for (int i = 0; i < model.Members.Length; i++)
+                {
+                    var m = model.Members[i];
+                    var comma = i < model.Members.Length - 1 ? "," : string.Empty;
+                    sb.AppendLine($"            {m.Name} = source.{m.Name}{comma}");
+                }
+                sb.AppendLine("        }; ");
+            }
         }
 
         sb.AppendLine("}");

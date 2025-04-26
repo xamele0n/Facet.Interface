@@ -11,6 +11,7 @@ internal sealed class FacetTargetModel : IEquatable<FacetTargetModel>
     public string? Namespace { get; }
     public FacetKind Kind { get; }
     public bool GenerateConstructor { get; }
+    public bool GenerateExpressionProjection { get; }
     public string SourceTypeName { get; }
     public string? ConfigurationTypeName { get; }
     public ImmutableArray<FacetMember> Members { get; }
@@ -20,6 +21,7 @@ internal sealed class FacetTargetModel : IEquatable<FacetTargetModel>
         string? @namespace,
         FacetKind kind,
         bool generateConstructor,
+        bool generateExpressionProjection,
         string sourceTypeName,
         string? configurationTypeName,
         ImmutableArray<FacetMember> members)
@@ -28,6 +30,7 @@ internal sealed class FacetTargetModel : IEquatable<FacetTargetModel>
         Namespace = @namespace;
         Kind = kind;
         GenerateConstructor = generateConstructor;
+        GenerateExpressionProjection = generateExpressionProjection;
         SourceTypeName = sourceTypeName;
         ConfigurationTypeName = configurationTypeName;
         Members = members;
@@ -42,6 +45,7 @@ internal sealed class FacetTargetModel : IEquatable<FacetTargetModel>
             && Namespace == other.Namespace
             && Kind == other.Kind
             && GenerateConstructor == other.GenerateConstructor
+            && GenerateExpressionProjection == other.GenerateExpressionProjection
             && SourceTypeName == other.SourceTypeName
             && ConfigurationTypeName == other.ConfigurationTypeName
             && Members.SequenceEqual(other.Members);
@@ -58,6 +62,7 @@ internal sealed class FacetTargetModel : IEquatable<FacetTargetModel>
             hash = hash * 31 + (Namespace?.GetHashCode() ?? 0);
             hash = hash * 31 + Kind.GetHashCode();
             hash = hash * 31 + GenerateConstructor.GetHashCode();
+            hash = hash * 31 + GenerateExpressionProjection.GetHashCode();
             hash = hash * 31 + (SourceTypeName?.GetHashCode() ?? 0);
             hash = hash * 31 + (ConfigurationTypeName?.GetHashCode() ?? 0);
 
@@ -75,5 +80,4 @@ internal sealed class FacetTargetModel : IEquatable<FacetTargetModel>
         public bool Equals(FacetTargetModel? x, FacetTargetModel? y) => x?.Equals(y) ?? y is null;
         public int GetHashCode(FacetTargetModel obj) => obj.GetHashCode();
     }
-
 }
