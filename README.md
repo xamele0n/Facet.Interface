@@ -15,6 +15,8 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 - :white_check_mark: **Configurable**: exclude members, include fields, add custom mapping
 - :white_check_mark: **Queryable**: produce `Expression<Func<TSource,TTarget>>` for EF Core and other LINQ providers
 
+---
+
 | Feature |  Description    |
 | ------- |------
 | Partial classes & records    |   Generate partial class or record from your types   |
