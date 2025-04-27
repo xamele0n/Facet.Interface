@@ -6,25 +6,18 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 "One part of a subject, situation, object that has many parts."
 ```
 
-**Facet** is a source generator that instantly scaffolds DTOs, typed LINQ projections, and ViewModels without any runtime overhead.
+**Facet** is a C# source generator that lets you define **lightweight projections** (DTOs, API models, etc.) directly from your domain models — without writing boilerplate.
+
+It generates partial classes or records with constructors, optional LINQ projections, and even supports custom mappings — all at compile time, with zero runtime cost.
 
 ---
 
-- :white_check_mark: **Zero runtime cost**: all mapping logic happens at compile time
-- :white_check_mark: **Boilerplate-free**: write only your domain and facet definitions
-- :white_check_mark: **Configurable**: exclude members, include fields, add custom mapping
-- :white_check_mark: **Queryable**: produce `Expression<Func<TSource,TTarget>>` for EF Core and other LINQ providers
-
----
-
-| Feature |  Description    |
-| ------- |------
-| Partial classes & records    |   Generate partial class or record from your types   |
-| Exclude members     |  Omit unwanted properties or fields via attribute parameters   |
-| Include public fields    |  Opt‑in support for mapping public fields   |
-| Custom mapping logic    |  Hook into `IFacetMapConfiguration<TSource, TTarget>` with `static Map()`   |
-| Constructor & projection    |  Auto-generate ctor and/or `Expression<Func<…, …>>` for LINQ providers   |
-| Records, classes, readonly, init-only | Works with all member kinds   |
+- :white_check_mark: Generate classes or records from existing types
+- :white_check_mark: Exclude fields/properties you don't want (basically create a Facetted view of your model))
+- :white_check_mark: Include public fields (optional)
+- :white_check_mark: Auto-generate constructors for fast mapping
+- :white_check_mark: LINQ projection expressions `(Expression<Func<TSource,TTarget>>)`
+- :white_check_mark: Custom mapping via `IFacetMapConfiguration`
 
 ## Quick Start
 
@@ -34,9 +27,8 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 dotnet add package Facet
 ```
 
-### 2. Create your facet
+### 2. Define  facet
 
-Define a `partial class`, attach the `Facet` attribute and you're done.
 ```csharp
 using Facet;
 
@@ -45,122 +37,90 @@ public class Person
     public string Name { get; set; }
     public string Email { get; set; }
     public int Age { get; set; }
-    public Guid RawId;
 }
 
-// Generate class that can be mapped from source model
-
-[Facet(typeof(Person), GenerateConstructor = true)]
-public partial class PersonDto { }
-
-// Generate class while adding and removing properties
-// You can pass an array of properties to exclude
-
-[Facet(typeof(Person), exclude: nameof(Person.Email)]
-public partial class PersonWithNote 
-{
-    public string Note { get; set; }
-}
-
-[Facet(typeof(Person), Kind = FacetKind.Record]
-public partial record PersonRecord
-{
-    // ..
-}
+// Generate a DTO that excludes Email
+[Facet(typeof(Person), exclude: nameof(Person.Email))]
+public partial class PersonDto;
 ```
 
-The `PersonDto` will have a constructor that maps the source type properties.
+This generates a PersonDto with only Name and Age, and a constructor that copies values.
 
-`PersonWithNote` is generated and will not have the Email property, but will have the Note property.
-
-`PersoneRecord` is generated as a **record** 
-
-You can map source to target:
+### 3. Use your generated facets
 
 ```csharp
-var person = new Person
-{
-    Name = "Tim",
-    Email = "hidden@example.com",
-    Age = 33,
-    RawId = Guid.NewGuid()
-};
-
+var person = new Person { Name = "Alice", Email = "a@b.com", Age = 30 };
 var dto = new PersonDto(person);
 ```
 
-## Advanced mapping support
-
-### 1. Constructor-based custom logic
-
-Install mapping package:
-
-```bash
-dotnet add package Facet.Mapping
-```
-Define your configuration:
+LINQ projection support:
 
 ```csharp
-using Facet;
-
-public class UserMapConfig : IFacetMapConfiguration<User, UserDto>
-{
-    public static void Map(User src, UserDto dst)
-    {
-        dst.FullName = $"{src.FirstName} {src.LastName}";
-        dst.RegisteredText = src.Registered.ToString("yyyy-MM-dd");
-    }
-}
-```
-
-Apply attribute with Configuration:
-
-```csharp
-[Facet(
-    typeof(User),
-    exclude: new[] { "Password" },
-    Configuration = typeof(UserMapConfig)]
-public partial class UserDto
-{
-    public string FullName { get; set; }
-    public string RegisteredText { get; set; }
-}
-```
-
-### 2. LINQ expression projection
-
-Enable SQL-friendly projection:
-
-```csharp
-[Facet(
-    typeof(PersonEntity),
-    GenerateExpressionProjection = true)]
-public partial class PersonDto { }
-```
-
-Use with EF Core or other `IQueryable<T>`:
-
-```csharp
-var dtos = dbContext.People
-    .Where(p => p.IsActive)
+var query = dbContext.People
     .Select(PersonDto.Projection)
     .ToList();
 ```
-## 3. Chaining Facets
 
-You can stack facets in-memory:
+## Advanced scenarios
+
+### Records
+
 
 ```csharp
-// 1) Entity → DTO
-[Facet(typeof(Person), GenerateExpressionProjection = true)]
-public partial class PersonDto { }
-
-// 2DTO → ViewModel
-[Facet(typeof(PersonDto))]
-public partial class PersonViewModel { /* add UI props */ }
-
-// 1) SQL → DTO
-var dtos = dbContext.People.Select(PersonDto.Projection).ToList();
-// 2) In-memory → VM
-var vms  = dtos.Select(PersonViewModel.Projection.Compile()).ToList();
+[Facet(typeof(Person), Kind = FacetKind.Record)]
+public partial record PersonRecord;
+`
 ```
+
+### Custom mapping
+
+Eg. you need to compile extra fields
+
+```csharp
+public class UserMapConfig : IFacetMapConfiguration<User, UserDto>
+{
+    public static void Map(User source, UserDto target)
+    {
+        target.FullName = $"{source.FirstName} {source.LastName}";
+    }
+}
+
+[Facet(typeof(User), Configuration = typeof(UserMapConfig))]
+public partial class UserDto;
+```
+This lets you add derived properties, formatting, etc.
+
+## Facet.Extensions for LINQ/EF Core async
+
+Install Facet.Extensions for one-line mapping helpers:
+
+```bash
+dotnet add package Facet.Extensions
+```
+
+Then:
+
+```csharp
+using Facet.Extensions;
+
+// Single object
+var dto = person.ToFacet<Person, PersonDto>();
+
+// Lists
+var dtos = people.SelectFacets<Person, PersonDto>();
+
+// IQueryable deferred projection
+var query = dbContext.People.SelectFacet<Person, PersonDto>();
+```
+
+And with EF Core:
+
+```csharp
+var dtos = await dbContext.People.ToFacetsAsync<Person, PersonDto>();
+
+var single = await dbContext.People.FirstFacetAsync<Person, PersonDto>();
+```
+
+---
+
+**Facet** - Define less, project more.

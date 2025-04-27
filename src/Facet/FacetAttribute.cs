@@ -40,11 +40,10 @@ public sealed class FacetAttribute : Attribute
     public Type? Configuration { get; set; }
 
     /// <summary>
-    /// Whether to generate a static <c>Expression&lt;Func&lt;TSource, TTarget&gt;&gt;</c> projection
-    /// for use with <c>IQueryable&lt;TSource&gt;</c> providers (e.g., Entity Framework Core).
-    /// Default is <c>false</c>.
+    /// Whether to generate the static Expression&lt;Func&lt;TSource,TTarget&gt;&gt; Projection.
+    /// Default is true so you always get a Projection by default.
     /// </summary>
-    public bool GenerateExpressionProjection { get; set; } = false;
+    public bool GenerateProjection { get; set; } = true;
 
     /// <summary>
     /// The kind of facet to generate. Determines whether a class or record is created.
