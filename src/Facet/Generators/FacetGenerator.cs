@@ -1,11 +1,9 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 
@@ -51,6 +49,7 @@ namespace Facet.Generators
                     .Where(n => n != null)!);
 
             var includeFields = GetNamedArg(attribute.NamedArguments, "IncludeFields", false);
+
             var generateConstructor = GetNamedArg(attribute.NamedArguments, "GenerateConstructor", true);
 
             var generateProjection = GetNamedArg(attribute.NamedArguments, "GenerateProjection", true);
@@ -62,6 +61,7 @@ namespace Facet.Generators
                 : FacetKind.Class;
 
             var members = new List<FacetMember>();
+
             foreach (var m in sourceType.GetMembers())
             {
                 token.ThrowIfCancellationRequested();
@@ -115,6 +115,7 @@ namespace Facet.Generators
             }
 
             var keyword = model.Kind == FacetKind.Record ? "record" : "class";
+
             sb.AppendLine($"public partial {keyword} {model.Name}");
             sb.AppendLine("{");
 
@@ -131,14 +132,16 @@ namespace Facet.Generators
                 sb.AppendLine();
                 sb.AppendLine($"    public {model.Name}({model.SourceTypeName} source)");
                 sb.AppendLine("    {");
+
                 foreach (var m in model.Members)
                     sb.AppendLine($"        this.{m.Name} = source.{m.Name};");
+
                 if (!string.IsNullOrWhiteSpace(model.ConfigurationTypeName))
                     sb.AppendLine($"        {model.ConfigurationTypeName}.Map(source, this);");
+
                 sb.AppendLine("    }");
             }
 
-            // Emit Projection only if the flag is true
             if (model.GenerateExpressionProjection)
             {
                 sb.AppendLine();
@@ -147,6 +150,7 @@ namespace Facet.Generators
             }
 
             sb.AppendLine("}");
+
             if (!string.IsNullOrWhiteSpace(model.Namespace))
                 sb.AppendLine("}");
 
