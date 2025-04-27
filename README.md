@@ -18,8 +18,8 @@ It generates partial classes or records with constructors, optional LINQ project
 - :white_check_mark: Auto-generate constructors for fast mapping
 - :white_check_mark: LINQ projection expressions `(Expression<Func<TSource,TTarget>>)`
 - :white_check_mark: Custom mapping via `IFacetMapConfiguration`
-- :white_check_mark: Use in EF Core queries by using `Facet.Extensions`
-- 
+- :white_check_mark: Project **EF Core** queries by using `Facet.Extensions`
+
 ## Quick Start
 
 ### 1. Install
