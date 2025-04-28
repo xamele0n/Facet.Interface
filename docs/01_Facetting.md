@@ -2,7 +2,7 @@
 
 Facetting is the process of defining **focused views** of a larger model at compile time.
 
-Instead of manually writing separate DTOs, mappers, and projections, **Facet** allows you to declare what you want to keep — and generates everything else.
+Instead of manually writing separate DTOs, mappers, and projections, **Facet** allows you to declare what you want to keep â€” and generates everything else.
 
 You can think of it like **carving out a specific facet** of a gem:  
 
@@ -27,3 +27,16 @@ public class User
     public string LastName { get; set; }
     public string Email { get; set; }
 }
+```
+
+Define a facet:
+```csharp
+[Facet(typeof(User), exclude: nameof(User.Email))]
+public partial class UserDto { }
+```
+
+You get:
+
+- A mapped constructor
+- A LINQ Expression Projection
+- A partial class or record ready to extend
