@@ -42,7 +42,7 @@ public class Person
 
 // Generate a DTO that excludes Email
 [Facet(typeof(Person), exclude: nameof(Person.Email))]
-public partial class PersonDto;
+public partial class PersonDto { }
 ```
 
 This generates a PersonDto with only Name and Age, and a constructor that copies values.
@@ -70,7 +70,6 @@ var query = dbContext.People
 ```csharp
 [Facet(typeof(Person), Kind = FacetKind.Record)]
 public partial record PersonRecord;
-`
 ```
 
 ### Custom mapping
