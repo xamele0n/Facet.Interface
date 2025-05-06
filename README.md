@@ -1,5 +1,3 @@
-_This is a new project, any help, feedback and contributions are highy appreciated._
-
 # Facet
 
 ```
