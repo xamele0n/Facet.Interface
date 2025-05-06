@@ -10,7 +10,27 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 
 It generates partial classes, records structs or record structs with constructors, optional LINQ projections, and even supports custom mappings — all at compile time, with zero runtime cost.
 
+##  What is Facetting?
+
+Facetting is the process of defining **focused views** of a larger model at compile time.
+
+Instead of manually writing separate DTOs, mappers, and projections, **Facet** allows you to declare what you want to keep — and generates everything else.
+
+You can think of it like **carving out a specific facet** of a gem:  
+
+- The part you care about  
+- Leaving the rest behind.
+
+## Why Facetting?
+
+- Reduce duplication across DTOs, projections, and ViewModels
+- Maintain strong typing with no runtime cost
+- Stay DRY (Don't Repeat Yourself) without sacrificing performance
+- Works seamlessly with LINQ providers like Entity Framework
+
 ---
+
+What can you do with **Facet**:
 
 - :white_check_mark: Generate classes, records, structs or record structs from existing types
 - :white_check_mark: Exclude fields/properties you don't want (create a Facetted view of your model))
@@ -129,27 +149,6 @@ var dtos = await dbContext.People.ToFacetsAsync<Person, PersonDto>();
 
 var single = await dbContext.People.FirstFacetAsync<Person, PersonDto>();
 ```
-
----
-
-# What is Facetting?
-
-Facetting is the process of defining **focused views** of a larger model at compile time.
-
-Instead of manually writing separate DTOs, mappers, and projections, **Facet** allows you to declare what you want to keep — and generates everything else.
-
-You can think of it like **carving out a specific facet** of a gem:  
-
-- The part you care about  
-- Leaving the rest behind.
-
-## Why Facetting?
-
-- Reduce duplication across DTOs, projections, and ViewModels
-- Maintain strong typing with no runtime cost
-- Stay DRY (Don't Repeat Yourself) without sacrificing performance
-- Works seamlessly with LINQ providers like Entity Framework
-
 ---
 
 **Facet** - Define less, project more.
