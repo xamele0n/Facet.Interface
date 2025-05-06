@@ -1,5 +1,8 @@
 # Facet
 
+[![NuGet](https://img.shields.io/nuget/v/Facet.svg)](https://www.nuget.org/packages/Facet)
+[![Downloads](https://img.shields.io/nuget/dt/Facet.svg)](https://www.nuget.org/packages/Facet)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 ```
 "One part of a subject, situation, object that has many parts."
 ```
