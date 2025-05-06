@@ -8,17 +8,16 @@ _This is a new project, any help, feedback and contributions are highy appreciat
 
 **Facet** is a C# source generator that lets you define **lightweight projections** (DTOs, API models, etc.) directly from your domain models — without writing boilerplate.
 
-It generates partial classes or records with constructors, optional LINQ projections, and even supports custom mappings — all at compile time, with zero runtime cost.
+It generates partial classes, records structs or record structs with constructors, optional LINQ projections, and even supports custom mappings — all at compile time, with zero runtime cost.
 
 ---
 
-- :white_check_mark: Generate classes or records from existing types
-- :white_check_mark: Exclude fields/properties you don't want (basically create a Facetted view of your model))
+- :white_check_mark: Generate classes, records, structs or record structs from existing types
+- :white_check_mark: Exclude fields/properties you don't want (create a Facetted view of your model))
 - :white_check_mark: Include public fields (optional)
 - :white_check_mark: Auto-generate constructors for fast mapping
 - :white_check_mark: LINQ projection expressions `(Expression<Func<TSource,TTarget>>)`
 - :white_check_mark: Custom mapping via `IFacetMapConfiguration`
-- :white_check_mark: Project **EF Core** queries by using `Facet.Extensions`
 
 ## Quick Start
 
@@ -70,6 +69,16 @@ var query = dbContext.People
 ```csharp
 [Facet(typeof(Person), Kind = FacetKind.Record)]
 public partial record PersonRecord;
+```
+
+### Struct & Record Struct
+
+```csharp
+[Facet(typeof(MyStruct), Kind = FacetKind.Struct, IncludeFields = true)]
+public partial struct MyStructDto;
+
+[Facet(typeof(MyRecordStruct), Kind = FacetKind.RecordStruct)]
+public partial record struct MyRecordStructDto;
 ```
 
 ### Custom mapping
