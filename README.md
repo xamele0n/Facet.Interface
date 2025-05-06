@@ -28,9 +28,7 @@ You can think of it like **carving out a specific facet** of a gem:
 - Stay DRY (Don't Repeat Yourself) without sacrificing performance
 - Works seamlessly with LINQ providers like Entity Framework
 
----
-
-What can you do with **Facet**:
+## Key features
 
 - :white_check_mark: Generate classes, records, structs or record structs from existing types
 - :white_check_mark: Exclude fields/properties you don't want (create a Facetted view of your model))
