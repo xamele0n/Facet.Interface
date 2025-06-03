@@ -12,17 +12,6 @@ It generates partial classes, records, structs, or record structs with construct
 
 ---
 
-## Documentation
-
-- **[Full Documentation & Guides](docs/README.md)**
-- [Quick Start](docs/02_QuickStart.md)
-- [Attribute Reference](docs/03_AttributeReference.md)
-- [Custom Mapping](docs/04_CustomMapping.md)
-- [Extension Methods](docs/05_Extensions.md)
-- [Advanced Scenarios](docs/06_AdvancedScenarios.md)
-
----
-
 ## What is Facetting?
 
 Facetting is the process of defining **focused views** of a larger model at compile time.
@@ -49,6 +38,11 @@ You can think of it like **carving out a specific facet** of a gem:
 - :white_check_mark: Auto-generate constructors for fast mapping
 - :white_check_mark: LINQ projection expressions `(Expression<Func<TSource,TTarget>>)`
 -:white_check_mark: Custom mapping via `IFacetMapConfiguration`
+
+## Documentation
+
+- **[Documentation & Guides](docs/README.md)**
+- [What is being generated?](docs/07_WhatIsBeingGenerated.md)
 
 ## Quick Start
 
