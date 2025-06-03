@@ -4,12 +4,12 @@ Welcome to the Facet documentation! This index will help you navigate all availa
 
 ## Table of Contents
 
-- [01_Facetting.md](01_Facetting.md): Introduction to Facetting
-- [02_QuickStart.md](02_QuickStart.md): Quick Start Guide
-- [03_AttributeReference.md](03_AttributeReference.md): Facet Attribute Reference
-- [04_CustomMapping.md](04_CustomMapping.md): Custom Mapping with IFacetMapConfiguration
-- [05_Extensions.md](05_Extensions.md): Extension Methods (LINQ, EF Core, etc.)
-- [06_AdvancedScenarios.md](06_AdvancedScenarios.md): Advanced Usage Scenarios
+- [Facetting](01_Facetting.md): Introduction to Facetting
+- [QuickStart](02_QuickStart.md): Quick Start Guide
+- [AttributeReference](03_AttributeReference.md): Facet Attribute Reference
+- [CustomMapping](04_CustomMapping.md): Custom Mapping with IFacetMapConfiguration
+- [Extensions](05_Extensions.md): Extension Methods (LINQ, EF Core, etc.)
+- [AdvancedScenarios](06_AdvancedScenarios.md): Advanced Usage Scenarios
 
 ---
 
