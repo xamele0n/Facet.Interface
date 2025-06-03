@@ -88,10 +88,12 @@ See the [Advanced Scenarios](docs/06_AdvancedScenarios.md) guide for more.
 Install Facet.Extensions for one-line mapping helpers:
 
 ```bash
-dotnet add package Facet.Extensionsusing Facet.Extensions;
+dotnet add package Facet.Extensions
 ```
 
 ```csharp
+using Facet.Extensions;
+
 // Single object
 var dto = person.ToFacet<Person, PersonDto>();
 
