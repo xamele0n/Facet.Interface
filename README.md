@@ -47,10 +47,12 @@ You can think of it like **carving out a specific facet** of a gem:
 ## Quick Start
 
 ```bash
-dotnet add package Facetusing Facet;
+dotnet add package Facet
 ```
 
 ```csharp
+using Facet;
+
 public class Person
 {
     public string Name { get; set; }
