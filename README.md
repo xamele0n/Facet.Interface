@@ -70,7 +70,11 @@ public partial class PersonDto { }
 
 var person = new Person { Name = "Alice", Email = "a@b.com", Age = 30 };
 var dto = new PersonDto(person); // Uses generated constructor
+```
+
 LINQ projection support:
+
+```csharp
 var query = dbContext.People.Select(PersonDto.Projection).ToList();
 ```
 
