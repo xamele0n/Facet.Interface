@@ -39,8 +39,6 @@ You can think of it like **carving out a specific facet** of a gem:
 - :white_check_mark: LINQ projection expressions `(Expression<Func<TSource,TTarget>>)`
 - :white_check_mark: Custom mapping via `IFacetMapConfiguration`
 
-___
-  
 ## Documentation
 
 - **[Documentation & Guides](docs/README.md)**
