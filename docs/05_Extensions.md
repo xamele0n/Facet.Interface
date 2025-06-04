@@ -44,7 +44,7 @@ var dtos = people.SelectFacets<Person, PersonDto>();
 dotnet add package Facet.Extensions.EFCore
 ```
 
-```
+```csharp
 // IQueryable (LINQ/EF Core)
 
 using Facet.Extensions.EFCore; 
