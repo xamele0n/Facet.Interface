@@ -45,7 +45,7 @@ using Facet;
 public partial class PersonDto { }
 ```
 
-### 4. Map entities to facets
+### 4. Map to facets
 
 ```csharp
 // Single-object mapping
