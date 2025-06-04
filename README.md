@@ -50,59 +50,10 @@ You can think of it like **carving out a specific facet** of a gem:
 
 Facet is modular and consists of several NuGet packages:
 
-```csharp
-public class Person
-{
-    public string Name { get; set; }
-    public string Email { get; set; }
-    public int Age { get; set; }
-}
-
-// Generate a DTO that excludes Email
-[Facet(typeof(Person), exclude: nameof(Person.Email))]
-public partial class PersonDto { }
-
-var person = new Person { Name = "Alice", Email = "a@b.com", Age = 30 };
-var dto = new PersonDto(person); // Uses generated constructor
-```
-
-LINQ projection support:
-
-```csharp
-var query = dbContext.People.Select(PersonDto.Projection).ToList();
-```
-
-## Advanced Scenarios
-
-- Generate records, structs, or record structs
-- Include/exclude fields and properties
-- Custom mapping logic for derived or formatted values
-- Seamless integration with LINQ and EF Core
-
-See the [Advanced Scenarios](docs/06_AdvancedScenarios.md) guide for more.
-
-## Facet.Extensions for LINQ/EF Core async
-
-Install Facet.Extensions for one-line mapping helpers:
-
-```bash
-dotnet add package Facet.Extensionsusing Facet.Extensions;
-```
-
-```csharp
-// Single object
-var dto = person.ToFacet<Person, PersonDto>();
-
-// Lists
-var dtos = people.SelectFacets<Person, PersonDto>();
-
-// IQueryable deferred projection
-var query = dbContext.People.SelectFacet<Person, PersonDto>();
-
-// EF Core async
-var dtos = await dbContext.People.ToFacetsAsync<Person, PersonDto>();
-var single = await dbContext.People.FirstFacetAsync<Person, PersonDto>();
-```
+- **Facet**: The core source generator. Generates DTOs, projections, and mapping code.
+- **Facet.Extensions**: Provider-agnostic extension methods for mapping and projecting (works with any LINQ provider, no EF Core dependency).
+- **Facet.Extensions.EFCore**: Async extension methods for Entity Framework Core (requires EF Core 6+).
+- **Facet.Mapping**: (Optional) Advanced static mapping configuration support for Facet.
 
 ---
 
