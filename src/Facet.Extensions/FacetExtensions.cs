@@ -1,16 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Facet.Extensions;
 /// <summary>
 /// Provides extension methods for mapping source entities or sequences
-/// to Facet-generated types, including synchronous and EF Core asynchronous projections.
+/// to Facet-generated types (synchronous and provider-agnostic only).
 /// </summary>
 public static class FacetExtensions
 {
@@ -72,65 +69,5 @@ public static class FacetExtensions
 
         var expr = (Expression<Func<TSource, TTarget>>)prop.GetValue(null)!;
         return source.Select(expr);
-    }
-
-    /// <summary>
-    /// Asynchronously projects an <see cref="IQueryable{TSource}"/> to a <see cref="List{TTarget}"/>
-    /// using the generated <c>Projection</c> expression and Entity Framework Core's <c>ToListAsync</c>.
-    /// </summary>
-    /// <typeparam name="TSource">The source entity type.</typeparam>
-    /// <typeparam name="TTarget">The facet type, which must define a public static <c>Expression&lt;Func&lt;TSource,TTarget&gt;&gt; Projection</c>.</typeparam>
-    /// <param name="source">The queryable source of entities.</param>
-    /// <param name="cancellationToken">A cancellation token.</param>
-    /// <returns>A <see cref="Task{List{TTarget}}"/> representing the asynchronous projection.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is <c>null</c>.</exception>
-    public static Task<List<TTarget>> ToFacetsAsync<TSource, TTarget>(
-        this IQueryable<TSource> source,
-        CancellationToken cancellationToken = default)
-        where TTarget : class
-    {
-        if (source is null) throw new ArgumentNullException(nameof(source));
-        return source.SelectFacet<TSource, TTarget>()
-                     .ToListAsync(cancellationToken);
-    }
-
-    /// <summary>
-    /// Asynchronously projects the first element of an <see cref="IQueryable{TSource}"/>
-    /// to a facet, or returns <c>null</c> if none found, using Entity Framework Core's <c>FirstOrDefaultAsync</c>.
-    /// </summary>
-    /// <typeparam name="TSource">The source entity type.</typeparam>
-    /// <typeparam name="TTarget">The facet type.</typeparam>
-    /// <param name="source">The queryable source of entities.</param>
-    /// <param name="cancellationToken">A cancellation token.</param>
-    /// <returns>A <see cref="Task{TTarget}"/> resolving to the first facet or <c>null</c>.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is <c>null</c>.</exception>
-    public static Task<TTarget?> FirstFacetAsync<TSource, TTarget>(
-        this IQueryable<TSource> source,
-        CancellationToken cancellationToken = default)
-        where TTarget : class
-    {
-        if (source is null) throw new ArgumentNullException(nameof(source));
-        return source.SelectFacet<TSource, TTarget>()
-                     .FirstOrDefaultAsync(cancellationToken);
-    }
-
-    /// <summary>
-    /// Asynchronously projects a single element of an <see cref="IQueryable{TSource}"/>
-    /// to a facet, throwing if not exactly one element exists, using Entity Framework Core's <c>SingleAsync</c>.
-    /// </summary>
-    /// <typeparam name="TSource">The source entity type.</typeparam>
-    /// <typeparam name="TTarget">The facet type.</typeparam>
-    /// <param name="source">The queryable source of entities.</param>
-    /// <param name="cancellationToken">A cancellation token.</param>
-    /// <returns>A <see cref="Task{TTarget}"/> resolving to the single facet.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="source"/> is <c>null</c>.</exception>
-    public static Task<TTarget> SingleFacetAsync<TSource, TTarget>(
-        this IQueryable<TSource> source,
-        CancellationToken cancellationToken = default)
-        where TTarget : class
-    {
-        if (source is null) throw new ArgumentNullException(nameof(source));
-        return source.SelectFacet<TSource, TTarget>()
-                     .SingleAsync(cancellationToken);
     }
 }

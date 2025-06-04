@@ -8,7 +8,7 @@ This guide will help you get up and running with Facet in just a few steps.
 dotnet add package Facet
 ```
 
-For LINQ/EF Core helpers:
+For LINQ helpers:
 ```
 dotnet add package Facet.Extensions
 ```
@@ -29,18 +29,28 @@ public class Person
 ```csharp
 using Facet;
 
+// Class
 [Facet(typeof(Person), exclude: nameof(Person.Email))]
 public partial class PersonDto { }
+
+// Record
+[Facet(typeof(Person), FacetKind.Record)]
+public partial record PersonDto { }
+
+// Struct
+[Facet(typeof(Person), FacetKind.Struct)]
+public partial struct PersonDto { }
 ```
 
 ## 4. Use the Generated Type
 
 ```csharp
 var person = new Person { Name = "Alice", Email = "a@b.com", Age = 30 };
+
 var dto = new PersonDto(person); // Uses generated constructor
 ```
 
-## 5. LINQ/EF Core Integration
+## 5. LINQ Integration
 
 ```csharp
 var query = dbContext.People.Select(PersonDto.Projection).ToList();
@@ -51,8 +61,9 @@ Or with Facet.Extensions:
 ```csharp
 using Facet.Extensions;
 
-var dtos = people.SelectFacets<Person, PersonDto>();
-var efQuery = dbContext.People.SelectFacet<Person, PersonDto>();
+var dto = person.ToFacet<Person, PersonDto>();
+
+var dtos = personList.SelectFacets<Person, PersonDto>();
 ```
 
 ---

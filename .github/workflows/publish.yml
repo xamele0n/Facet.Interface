@@ -67,6 +67,11 @@ jobs:
                 --api-key "${{ secrets.NUGET_MAP_API_KEY }}" `
                 --source https://api.nuget.org/v3/index.json `
                 --skip-duplicate
+            } elseif ($file.Name -like "Facet.Extensions.EFCore.*.nupkg") {
+              dotnet nuget push $file `
+                --api-key "${{ secrets.NUGET_API_KEY_EXTENSIONS_EF }}" `
+                --source https://api.nuget.org/v3/index.json `
+                --skip-duplicate
             } elseif ($file.Name -like "Facet.Extensions.*.nupkg") {
               dotnet nuget push $file `
                 --api-key "${{ secrets.NUGET_API_KEY_EXTENSIONS }}" `

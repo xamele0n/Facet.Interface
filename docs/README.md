@@ -11,7 +11,6 @@ Welcome to the Facet documentation! This index will help you navigate all availa
 - [Extension Methods](05_Extensions.md): Extension Methods (LINQ, EF Core, etc.)
 - [Advanced Scenarios](06_AdvancedScenarios.md): Advanced Usage Scenarios
 - [What is Being Generated?](07_WhatIsBeingGenerated.md): Before/After Examples
+- [Facet.Extensions.EFCore](../src/Facet.Extensions.EFCore/README.md): EF Core Async Extension Methods
 
 ---
-
-For the latest updates, visit the [Facet GitHub repository](https://github.com/Tim-Maes/Facet).

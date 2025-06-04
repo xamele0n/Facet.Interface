@@ -47,9 +47,12 @@ public partial class UserDto { public string FullName { get; set; } }
 ## 5. LINQ/EF Core Projections
 
 ```csharp
+using Facet.Extensions; // provider-agnostic
 var query = dbContext.People.SelectFacet<Person, PersonDto>();
-```
 
+using Facet.Extensions.EFCore; // for async EF Core support
+var dtosAsync = await dbContext.People.ToFacetsAsync<Person, PersonDto>();
+```
 ---
 
-See [Attribute Reference](03_AttributeReference.md) and [Custom Mapping](04_CustomMapping.md) for more details.
+See [Attribute Reference](03_AttributeReference.md), [Custom Mapping](04_CustomMapping.md), and [Extension Methods](05_Extensions.md) for more details.

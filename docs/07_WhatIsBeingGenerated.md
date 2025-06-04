@@ -1,6 +1,6 @@
 # What is Being Generated?
 
-This page shows concrete examples of what Facet generates for different scenarios. These examples help you understand the output you can expect in your own projects.
+This page shows _some_ concrete examples of what Facet generates for different scenarios. These examples help you understand the output you can expect in your own projects.
 
 ---
 

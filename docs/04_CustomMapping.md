@@ -33,6 +33,7 @@ public partial class UserDto { public string FullName { get; set; } }
 The generated constructor will call your `Map` method after copying properties.
 
 ## Notes
+
 - The `Map` method must be `public static` and match the signature.
 - You can use this to set any additional or computed properties.
 
