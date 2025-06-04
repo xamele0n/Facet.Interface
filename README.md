@@ -34,7 +34,7 @@ You can think of it like **carving out a specific facet** of a gem:
 
 - :white_check_mark: Generate classes, records, structs, or record structs from existing types
 - :white_check_mark: Exclude fields/properties you don't want (create a Facetted view of your model)
-- :white_check_mark: Include public fields (optional)
+- :white_check_mark: Include/redact public fields
 - :white_check_mark: Auto-generate constructors for fast mapping
 - :white_check_mark: LINQ projection expressions `(Expression<Func<TSource,TTarget>>)`
 - :white_check_mark: Custom mapping via `IFacetMapConfiguration`
@@ -51,8 +51,11 @@ ___
 Facet is modular and consists of several NuGet packages:
 
 - **Facet**: The core source generator. Generates DTOs, projections, and mapping code.
+
 - **Facet.Extensions**: Provider-agnostic extension methods for mapping and projecting (works with any LINQ provider, no EF Core dependency).
+
 - **Facet.Extensions.EFCore**: Async extension methods for Entity Framework Core (requires EF Core 6+).
+
 - **Facet.Mapping**: (Optional) Advanced static mapping configuration support for Facet.
 
 ---
