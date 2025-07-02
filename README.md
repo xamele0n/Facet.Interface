@@ -2,10 +2,6 @@
 
 > "One part of a subject, situation, object that has many parts."
 
-[![NuGet](https://img.shields.io/nuget/v/Facet.svg)](https://www.nuget.org/packages/Facet)
-[![Downloads](https://img.shields.io/nuget/dt/Facet.svg)](https://www.nuget.org/packages/Facet)
-![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)
-
 **Facet** is a C# source generator that lets you define **lightweight projections** (DTOs, API models, etc.) directly from your domain models — without writing boilerplate.
 
 It generates partial classes, records, structs, or record structs with constructors, optional LINQ projections, and even supports custom mappings — all at compile time, with zero runtime cost.
