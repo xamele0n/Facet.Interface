@@ -56,7 +56,7 @@ Facet is modular and consists of several NuGet packages:
 
 - **Facet.Mapping**: Advanced static mapping configuration support with async capabilities for complex mapping scenarios.
 
-## Quick Examples
+## (Very) Quick Examples
 
 ### Basic Projection
 ```csharp
