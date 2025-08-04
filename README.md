@@ -2,7 +2,7 @@
 
 > "One part of a subject, situation, object that has many parts."
 
-**Facet** is a C# source generator that lets you define **lightweight projections** (DTOs, API models, etc.) directly from your domain models — without writing boilerplate.
+**Facet** is a C# source generator that lets you define **lightweight projections** (DTOs, API models, etc.) directly from your domain models without writing boilerplate.
 
 It generates partial **classes, records, structs**, or **record structs** with constructors, optional LINQ projections, and even supports custom mappings, all at compile time, with zero runtime cost.
 
