@@ -8,7 +8,7 @@ It generates partial classes, records, structs, or record structs with construct
 
 ---
 
-## What is Facetting?
+## :gem: What is Facetting?
 
 Facetting is the process of defining **focused views** of a larger model at compile time.
 
@@ -19,19 +19,19 @@ You can think of it like **carving out a specific facet** of a gem:
 - The part you care about
 - Leaving the rest behind.
 
-## Why Facetting?
+## :grey_question: Why Facetting?
 
 - Reduce duplication across DTOs, projections, and ViewModels
 - Maintain strong typing with no runtime cost
 - Stay DRY (Don't Repeat Yourself) without sacrificing performance
 - Works seamlessly with LINQ providers like Entity Framework
 
-## Documentation
+## :clipboard: Documentation
 
 - **[Documentation & Guides](docs/README.md)**
 - [What is being generated?](docs/07_WhatIsBeingGenerated.md)
 
-## Key Features
+## :star: Key Features
 
 - :white_check_mark: Generate classes, records, structs, or record structs from existing types
 - :white_check_mark: Exclude fields/properties you don't want (create a Facetted view of your model)
@@ -45,7 +45,7 @@ You can think of it like **carving out a specific facet** of a gem:
 - :white_check_mark: **Full cancellation token support** for async operations
 - :white_check_mark: **Dependency injection support** for mappers with external services
 
-## The Facet Ecosystem
+## :earth_americas: The Facet Ecosystem
 
 Facet is modular and consists of several NuGet packages:
 
@@ -57,7 +57,24 @@ Facet is modular and consists of several NuGet packages:
 
 - **Facet.Mapping**: Advanced static mapping configuration support with async capabilities and dependency injection for complex mapping scenarios.
 
-## (Very) Quick Examples
+## :rocket: Quick start 
+
+### Install the NuGet Package
+
+```
+dotnet add package Facet
+```
+
+For LINQ helpers:
+```
+dotnet add package Facet.Extensions
+```
+
+For EF Core support:
+```
+dotnet add package Facet.Extensions.EFCore
+```
+
 
 ### Basic Projection
 ```csharp
