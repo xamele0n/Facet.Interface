@@ -1,5 +1,16 @@
 
-> "One part of a subject, situation, object that has many parts."
+<div align="center">
+  <img
+    src="https://raw.githubusercontent.com/Tim-Maes/Facet/master/assets/Facet.png"
+    alt="Facet logo"
+    width="400">
+</div>
+
+<div align="center">
+"One part of a subject, situation, object that has many parts."
+</div>
+
+---
 
 **Facet** is a C# source generator that lets you define **lightweight projections** (DTOs, API models, etc.) directly from your domain models, without writing boilerplate.
 
