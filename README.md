@@ -26,6 +26,11 @@ You can think of it like **carving out a specific facet** of a gem:
 - Stay DRY (Don't Repeat Yourself) without sacrificing performance
 - Works seamlessly with LINQ providers like Entity Framework
 
+## Documentation
+
+- **[Documentation & Guides](docs/README.md)**
+- [What is being generated?](docs/07_WhatIsBeingGenerated.md)
+
 ## Key Features
 
 - :white_check_mark: Generate classes, records, structs, or record structs from existing types
@@ -39,11 +44,6 @@ You can think of it like **carving out a specific facet** of a gem:
 - :white_check_mark: **Collection mapping** with sequential and parallel processing
 - :white_check_mark: **Full cancellation token support** for async operations
 - :white_check_mark: **Dependency injection support** for mappers with external services
-
-## Documentation
-
-- **[Documentation & Guides](docs/README.md)**
-- [What is being generated?](docs/07_WhatIsBeingGenerated.md)
 
 ## The Facet Ecosystem
 
