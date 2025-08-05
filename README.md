@@ -1,10 +1,3 @@
-<h1>
-<div align="center" style="margin:0; padding:0;">
-<img src="https://github.com/Tim-Maes/Facet/blob/master/assets/Facet.png"
-     alt="BlazorFrame Logo"
-     width="600" />
-</div>
-</h1>
 
 > "One part of a subject, situation, object that has many parts."
 
