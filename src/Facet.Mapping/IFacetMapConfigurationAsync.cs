@@ -21,3 +21,22 @@ public interface IFacetMapConfigurationAsync<TSource, TTarget>
     /// <returns>A task representing the async mapping operation</returns>
     static abstract Task MapAsync(TSource source, TTarget target, CancellationToken cancellationToken = default);
 }
+
+/// <summary>
+/// Instance-based interface for defining async custom mapping logic with dependency injection support.
+/// Use this interface when your async mapping logic requires injected services.
+/// </summary>
+/// <typeparam name="TSource">The source type</typeparam>
+/// <typeparam name="TTarget">The target Facet type</typeparam>
+public interface IFacetMapConfigurationAsyncInstance<TSource, TTarget>
+{
+    /// <summary>
+    /// Asynchronously maps source to target with custom logic.
+    /// This method is called after the standard property copying is completed.
+    /// </summary>
+    /// <param name="source">The source object</param>
+    /// <param name="target">The target object with basic properties already copied</param>
+    /// <param name="cancellationToken">Cancellation token to cancel the async operation</param>
+    /// <returns>A task representing the async mapping operation</returns>
+    Task MapAsync(TSource source, TTarget target, CancellationToken cancellationToken = default);
+}

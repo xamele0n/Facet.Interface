@@ -21,3 +21,22 @@ public interface IFacetMapConfigurationHybrid<TSource, TTarget> :
     // - Map(): Fast, synchronous operations (property copying, calculations)
     // - MapAsync(): Expensive, async operations (database queries, API calls)
 }
+
+/// <summary>
+/// Instance-based interface that provides both synchronous and asynchronous mapping capabilities 
+/// with dependency injection support. Implement this interface when you need both sync and async 
+/// operations and require injected services.
+/// </summary>
+/// <typeparam name="TSource">The source type</typeparam>
+/// <typeparam name="TTarget">The target Facet type</typeparam>
+public interface IFacetMapConfigurationHybridInstance<TSource, TTarget> : 
+    IFacetMapConfigurationInstance<TSource, TTarget>,
+    IFacetMapConfigurationAsyncInstance<TSource, TTarget>
+{
+    // This interface combines both sync and async mapping capabilities for instance-based mappers.
+    // Implementations must provide both Map() and MapAsync() methods.
+    // 
+    // Typical usage pattern:
+    // - Map(): Fast, synchronous operations (property copying, calculations)
+    // - MapAsync(): Expensive, async operations (database queries, API calls)
+}

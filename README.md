@@ -2,9 +2,9 @@
 
 > "One part of a subject, situation, object that has many parts."
 
-**Facet** is a C# source generator that lets you define **lightweight projections** (DTOs, API models, etc.) directly from your domain models — without writing boilerplate.
+**Facet** is a C# source generator that lets you define **lightweight projections** (DTOs, API models, etc.) directly from your domain models, without writing boilerplate.
 
-It generates partial classes, records, structs, or record structs with constructors, optional LINQ projections, and even supports custom mappings — all at compile time, with zero runtime cost.
+It generates partial classes, records, structs, or record structs with constructors, optional LINQ projections, and even supports custom mappings, all at compile time, with zero runtime cost.
 
 ---
 
@@ -38,6 +38,7 @@ You can think of it like **carving out a specific facet** of a gem:
 - :white_check_mark: **Hybrid sync/async mapping** for optimal performance
 - :white_check_mark: **Collection mapping** with sequential and parallel processing
 - :white_check_mark: **Full cancellation token support** for async operations
+- :white_check_mark: **Dependency injection support** for mappers with external services
 
 ## Documentation
 
@@ -54,7 +55,7 @@ Facet is modular and consists of several NuGet packages:
 
 - **Facet.Extensions.EFCore**: Async extension methods for Entity Framework Core (requires EF Core 6+).
 
-- **Facet.Mapping**: Advanced static mapping configuration support with async capabilities for complex mapping scenarios.
+- **Facet.Mapping**: Advanced static mapping configuration support with async capabilities and dependency injection for complex mapping scenarios.
 
 ## (Very) Quick Examples
 
@@ -102,6 +103,33 @@ public class UserAsyncMapper : IFacetMapConfigurationAsync<User, UserDto>
 // Usage
 var userDto = await user.ToFacetAsync<User, UserDto, UserAsyncMapper>();
 var userDtos = await users.ToFacetsParallelAsync<User, UserDto, UserAsyncMapper>();
+```
+
+### Async Mapping with Dependency Injection
+```csharp
+public class UserAsyncMapperWithDI : IFacetMapConfigurationAsyncInstance<User, UserDto>
+{
+    private readonly IProfilePictureService _profileService;
+    private readonly IReputationService _reputationService;
+
+    public UserAsyncMapperWithDI(IProfilePictureService profileService, IReputationService reputationService)
+    {
+        _profileService = profileService;
+        _reputationService = reputationService;
+    }
+
+    public async Task MapAsync(User source, UserDto target, CancellationToken cancellationToken = default)
+    {
+        // Use injected services
+        target.ProfilePicture = await _profileService.GetProfilePictureAsync(source.Id, cancellationToken);
+        target.ReputationScore = await _reputationService.CalculateReputationAsync(source.Email, cancellationToken);
+    }
+}
+
+// Usage with DI
+var mapper = new UserAsyncMapperWithDI(profileService, reputationService);
+var userDto = await user.ToFacetAsync(mapper);
+var userDtos = await users.ToFacetsParallelAsync(mapper);
 ```
 
 ### EF Core Integration
