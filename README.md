@@ -5,7 +5,6 @@
      width="600" />
 </div>
 </h1>
-     
 
 > "One part of a subject, situation, object that has many parts."
 
