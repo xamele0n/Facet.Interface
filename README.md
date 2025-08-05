@@ -6,8 +6,6 @@
 
 It generates partial classes, records, structs, or record structs with constructors, optional LINQ projections, and even supports custom mappings, all at compile time, with zero runtime cost.
 
----
-
 ## :gem: What is Facetting?
 
 Facetting is the process of defining **focused views** of a larger model at compile time.
