@@ -12,7 +12,7 @@ It generates partial classes, records, structs, or record structs with construct
 
 Facetting is the process of defining **focused views** of a larger model at compile time.
 
-Instead of manually writing separate DTOs, mappers, and projections, **Facet** allows you to declare what you want to keep — and generates everything else.
+Instead of manually writing separate DTOs, mappers, and projections, **Facet** allows you to declare what you want to keep, and generates everything else.
 
 You can think of it like **carving out a specific facet** of a gem:
 
