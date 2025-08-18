@@ -208,7 +208,3 @@ var results = await dbContext.Products
     .OrderBy(dto => dto.Name)
     .ToListAsync();
 ```
-
----
-
-**Facet** — Define less, project more.
