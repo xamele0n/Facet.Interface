@@ -1,4 +1,3 @@
-
 <div align="center">
   <img
     src="https://raw.githubusercontent.com/Tim-Maes/Facet/master/assets/Facet.png"
@@ -78,7 +77,6 @@ For EF Core support:
 dotnet add package Facet.Extensions.EFCore
 ```
 
-
 ### Basic Projection
 ```csharp
 [Facet(typeof(User))]
@@ -89,6 +87,48 @@ var userDto = user.ToFacet<User, UserDto>();
 var userDtos = users.SelectFacets<User, UserDto>();
 ```
 
+### Property Exclusion & Field Inclusion
+```csharp
+// Exclude sensitive properties
+string[] excludeFields = { "Password", "Email" };
+
+[Facet(typeof(User), exclude: excludeFields)]
+public partial class PublicUserDto { }
+
+// Include public fields
+[Facet(typeof(Entity), IncludeFields = true)]
+public partial class EntityDto { }
+```
+
+### Different Type Kinds
+```csharp
+// Generate as record (immutable by default)
+[Facet(typeof(Product), Kind = FacetKind.Record)]
+public partial record ProductDto;
+
+// Generate as struct (value type)
+[Facet(typeof(Point), Kind = FacetKind.Struct)]
+public partial struct PointDto;
+
+// Generate as record struct (immutable value type)
+[Facet(typeof(Coordinates), Kind = FacetKind.RecordStruct)]
+public partial record struct CoordinatesDto;
+```
+
+### Smart Defaults for Records
+```csharp
+public record ModernUser
+{
+    public required string Id { get; init; }
+    public required string Name { get; init; }
+    public string? Email { get; set; }
+}
+
+// Records automatically preserve init-only and required modifiers
+[Facet(typeof(ModernUser))]
+public partial record ModernUserDto;  // Preserves required/init-only automaticall
+```
+
 ### Custom Sync Mapping
 ```csharp
 public class UserMapper : IFacetMapConfiguration<User, UserDto>
@@ -96,6 +136,7 @@ public class UserMapper : IFacetMapConfiguration<User, UserDto>
     public static void Map(User source, UserDto target)
     {
         target.FullName = $"{source.FirstName} {source.LastName}";
+        target.Age = CalculateAge(source.DateOfBirth);
     }
 }
 
@@ -103,6 +144,7 @@ public class UserMapper : IFacetMapConfiguration<User, UserDto>
 public partial class UserDto 
 {
     public string FullName { get; set; }
+    public int Age { get; set; }
 }
 ```
 
@@ -158,6 +200,13 @@ var userDtos = await users.ToFacetsParallelAsync(mapper);
 var userDtos = await dbContext.Users
     .Where(u => u.IsActive)
     .ToFacetsAsync<User, UserDto>();
+
+// LINQ projection for complex queries
+var results = await dbContext.Products
+    .Where(p => p.IsAvailable)
+    .SelectFacet<Product, ProductDto>()
+    .OrderBy(dto => dto.Name)
+    .ToListAsync();
 ```
 
 ---
