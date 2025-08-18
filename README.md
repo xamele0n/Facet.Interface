@@ -103,15 +103,15 @@ public partial class EntityDto { }
 ### Different Type Kinds
 ```csharp
 // Generate as record (immutable by default)
-[Facet(typeof(Product), Kind = FacetKind.Record)]
+[Facet(typeof(Product))]
 public partial record ProductDto;
 
 // Generate as struct (value type)
-[Facet(typeof(Point), Kind = FacetKind.Struct)]
+[Facet(typeof(Point))]
 public partial struct PointDto;
 
 // Generate as record struct (immutable value type)
-[Facet(typeof(Coordinates), Kind = FacetKind.RecordStruct)]
+[Facet(typeof(Coordinates))]
 public partial record struct CoordinatesDto;
 ```
 
