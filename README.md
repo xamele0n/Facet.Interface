@@ -55,9 +55,9 @@ Facet is modular and consists of several NuGet packages:
 
 - **Facet.Extensions**: Provider-agnostic extension methods for mapping and projecting (works with any LINQ provider, no EF Core dependency).
 
-- **Facet.Extensions.EFCore**: Async extension methods for Entity Framework Core (requires EF Core 6+).
-
 - **Facet.Mapping**: Advanced static mapping configuration support with async capabilities and dependency injection for complex mapping scenarios.
+
+- **Facet.Extensions.EFCore**: Async extension methods for Entity Framework Core (requires EF Core 6+).
 
 ## :rocket: Quick start 
 
@@ -112,21 +112,7 @@ public partial struct PointDto;
 
 // Generate as record struct (immutable value type)
 [Facet(typeof(Coordinates))]
-public partial record struct CoordinatesDto;
-```
-
-### Smart Defaults for Records
-```csharp
-public record ModernUser
-{
-    public required string Id { get; init; }
-    public required string Name { get; init; }
-    public string? Email { get; set; }
-}
-
-// Records automatically preserve init-only and required modifiers
-[Facet(typeof(ModernUser))]
-public partial record ModernUserDto;  // Preserves required/init-only automaticall
+public partial record struct CoordinatesDto; // Preserves required/init-only
 ```
 
 ### Custom Sync Mapping
@@ -195,16 +181,45 @@ var userDtos = await users.ToFacetsParallelAsync(mapper);
 ```
 
 ### EF Core Integration
+
+#### Forward Mapping (Entity -> Facet)
 ```csharp
 // Async projection directly in EF Core queries
 var userDtos = await dbContext.Users
     .Where(u => u.IsActive)
-    .ToFacetsAsync<User, UserDto>();
+    .ToFacetsAsync<UserDto>();
 
 // LINQ projection for complex queries
 var results = await dbContext.Products
     .Where(p => p.IsAvailable)
-    .SelectFacet<Product, ProductDto>()
+    .SelectFacet<ProductDto>()
     .OrderBy(dto => dto.Name)
     .ToListAsync();
+```
+
+#### Reverse Mapping (Facet -> Entity)
+```csharp
+[Facet(typeof(User)]
+public partial class UpdateUserDto { }
+
+[HttpPut("{id}")]
+public async Task<IActionResult> UpdateUser(int id, UpdateUserDto dto)
+{
+    var user = await context.Users.FindAsync(id);
+    if (user == null) return NotFound();
+    
+    // Only updates properties that mutated
+    user.UpdateFromFacet(dto, context);
+    
+    await context.SaveChangesAsync();
+    return NoContent();
+}
+
+// With change tracking for auditing
+var result = user.UpdateFromFacetWithChanges(dto, context);
+if (result.HasChanges)
+{
+    logger.LogInformation("User {UserId} updated. Changed: {Properties}", 
+        user.Id, string.Join(", ", result.ChangedProperties));
+}
 ```
