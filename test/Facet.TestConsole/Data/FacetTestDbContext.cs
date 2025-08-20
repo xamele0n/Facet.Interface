@@ -108,7 +108,6 @@ public class FacetTestDbContext : DbContext
         modelBuilder.Entity<Product>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.Property(e => e.Price).HasColumnType("decimal(18,2)");
             
             // Configure relationship with Category
             entity.HasOne<Category>()

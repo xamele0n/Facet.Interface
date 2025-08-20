@@ -86,9 +86,11 @@ public class EfCoreIntegrationTests
         Console.WriteLine("====================================");
 
         Console.WriteLine("  Testing complex LINQ query with projections:");
+        
+        // SQLite-compatible query - order by name instead of decimal price
         var productDtos = await _context.Products
             .Where(p => p.IsAvailable && p.Price > 100)
-            .OrderBy(p => p.Price)
+            .OrderBy(p => p.Name)  // Changed from OrderBy(p => p.Price) for SQLite compatibility
             .ToFacetsAsync<DbProductDto>();
 
         Console.WriteLine($"    Retrieved {productDtos.Count} available products over $100:");

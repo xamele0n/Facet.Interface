@@ -173,8 +173,30 @@ class Program
         }
 
         Console.WriteLine("\n=== All tests completed! ===");
-        Console.WriteLine("Press any key to exit...");
-        Console.ReadKey();
+        
+        // Only try to read key if we have console input available
+        if (IsConsoleInputAvailable())
+        {
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
+        }
+        else
+        {
+            Console.WriteLine("Running in CI environment - exiting automatically.");
+        }
+    }
+
+    static bool IsConsoleInputAvailable()
+    {
+        try
+        {
+            // Check if console input is redirected or unavailable
+            return !Console.IsInputRedirected && Environment.UserInteractive;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -185,8 +207,9 @@ class Program
             })
             .ConfigureServices((context, services) =>
             {
+                // Use SQLite instead of SQL Server for cross-platform compatibility
                 services.AddDbContext<FacetTestDbContext>(options =>
-                    options.UseSqlServer(context.Configuration.GetConnectionString("DefaultConnection")));
+                    options.UseSqlite(context.Configuration.GetConnectionString("DefaultConnection")));
 
                 services.AddScoped<IUserService, UserService>();
                 services.AddScoped<IProductService, ProductService>();
