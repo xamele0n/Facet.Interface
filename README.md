@@ -93,7 +93,7 @@ var userDtos = users.SelectFacets<UserDto>();
 string[] excludeFields = { "Password", "Email" };
 
 [Facet(typeof(User), exclude: excludeFields)]
-public partial class PublicUserDto { }
+public partial class UserWithoutEmail { }
 
 // Include public fields
 [Facet(typeof(Entity), IncludeFields = true)]
