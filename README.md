@@ -44,7 +44,7 @@ You can think of it like **carving out a specific facet** of a gem:
 - :white_check_mark: Exclude fields/properties you don't want (create a Facetted view of your model)
 - :white_check_mark: Include/redact public fields
 - :white_check_mark: Auto-generate constructors for fast mapping
-- :white_check_mark: LINQ projection expressions `(Expression<Func<TSource,TTarget>>)`
+- :white_check_mark: LINQ projection expressions
 - :white_check_mark: Full mapping support with custom mapping configurations
 
 ## :earth_americas: The Facet Ecosystem
