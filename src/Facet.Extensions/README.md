@@ -4,9 +4,9 @@ Provider-agnostic extension methods for the Facet library, enabling one-line map
 
 ## Key Features
 
-- Constructor-based mapping `(ToFacet<TSource,TTarget>)` for any object graph
-- Enumerable mapping `(SelectFacets<TSource,TTarget>)` via LINQ
-- IQueryable projection `(SelectFacet<TSource,TTarget>)` using the generated Projection expression
+- Constructor-based mapping `(ToFacet<>)` for any object graph
+- Enumerable mapping `(SelectFacets<>)` via LINQ
+- IQueryable projection `(SelectFacet<>)` using the generated Projection expression
 
 All methods are zero-boilerplate and leverage your already generated ctor or Projection property.
 
@@ -49,13 +49,13 @@ public partial class PersonDto { }
 
 ```csharp
 // Single-object mapping
-var dto = person.ToFacet<Person, PersonDto>();
+var dto = person.ToFacet<PersonDto>();
 
 // Enumerable mapping (in-memory)
-var dtos = people.SelectFacets<Person, PersonDto>().ToList();
+var dtos = people.SelectFacets<PersonDto>().ToList();
 
 // IQueryable projection (deferred)
-var query = dbContext.People.SelectFacet<Person, PersonDto>();
+var query = dbContext.People.SelectFacet<PersonDto>();
 var list  = query.ToList();
 ```
 
@@ -63,8 +63,11 @@ var list  = query.ToList();
 
 | Method |  Description    |
 | ------- |------
+| `ToFacet<TTarget>()`    |   Map one instance via generated constructor  |
 | `ToFacet<TSource,TTarget>()`    |   Map one instance via generated constructor  |
+| `SelectFacets<TTarget>()`     |  Map an `IEnumerable<TSource>` via constructor   |
 | `SelectFacets<TSource,TTarget>()`     |  Map an `IEnumerable<TSource>` via constructor   |
+| `SelectFacet<TTarget>()`    |  Project `IQueryable<TSource>` to `IQueryable<TTarget>`   |
 | `SelectFacet<TSource,TTarget>()`    |  Project `IQueryable<TSource>` to `IQueryable<TTarget>`   |
 
 ## Requirements

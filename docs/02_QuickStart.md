@@ -61,9 +61,9 @@ Or with Facet.Extensions:
 ```csharp
 using Facet.Extensions;
 
-var dto = person.ToFacet<Person, PersonDto>();
+var dto = person.ToFacet<PersonDto>();
 
-var dtos = personList.SelectFacets<Person, PersonDto>();
+var dtos = personList.SelectFacets<PersonDto>();
 ```
 
 ---

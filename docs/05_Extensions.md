@@ -7,8 +7,11 @@ For async EF Core support, see the separate Facet.Extensions.EFCore package.
 
 | Method                              | Description                                                      |
 |------------------------------------- |------------------------------------------------------------------|
+| `ToFacet<TTarget>()`        | Map a single object using the generated constructor.              |
 | `ToFacet<TSource, TTarget>()`        | Map a single object using the generated constructor.              |
+| `SelectFacets<TTarget>()`   | Map an `IEnumerable<TSource>` to `IEnumerable<TTarget>`.          |
 | `SelectFacets<TSource, TTarget>()`   | Map an `IEnumerable<TSource>` to `IEnumerable<TTarget>`.          |
+| `SelectFacet<TTarget>()`    | Project an `IQueryable<TSource>` to `IQueryable<TTarget>`.        |
 | `SelectFacet<TSource, TTarget>()`    | Project an `IQueryable<TSource>` to `IQueryable<TTarget>`.        |
 
 ## Key Methods (Facet.Extensions.EFCore)
@@ -32,10 +35,10 @@ using Facet.Extensions;
 
 // provider-agnostic
 // Single object
-var dto = person.ToFacet<Person, PersonDto>();
+var dto = person.ToFacet<PersonDto>();
 
 // Enumerable
-var dtos = people.SelectFacets<Person, PersonDto>();
+var dtos = people.SelectFacets<PersonDto>();
 ```
 
 ### EF Core Extensions
