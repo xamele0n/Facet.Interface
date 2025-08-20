@@ -80,11 +80,11 @@ dotnet add package Facet.Extensions.EFCore
 ### Basic Projection
 ```csharp
 [Facet(typeof(User))]
-public partial class UserDto { }
+public partial class UserFacet { }
 
 // Auto-generates constructor, properties, and LINQ projection
-var userDto = user.ToFacet<UserDto>();
-var userDtos = users.SelectFacets<UserDto>();
+var user = user.ToFacet<UserFacet>();
+var users = users.SelectFacets<UserFacet>();
 ```
 
 ### Property Exclusion & Field Inclusion
