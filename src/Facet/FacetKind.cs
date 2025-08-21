@@ -14,6 +14,7 @@
         Class = 0,
         Record = 1,
         RecordStruct = 2,
-        Struct = 3
+        Struct = 3,
+        Interface = 4
     }
 }

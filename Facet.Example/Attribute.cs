@@ -76,4 +76,14 @@ public sealed class FacetAttribute : Attribute
         SourceType = sourceType;
         Exclude = exclude ?? Array.Empty<string>();
     }
+    
+    public enum FacetKind
+    {
+        Auto = -1,
+        Class = 0,
+        Record = 1,
+        RecordStruct = 2,
+        Struct = 3,
+        Interface = 4
+    }
 }
